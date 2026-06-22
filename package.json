@@ -1,0 +1,8 @@
+{
+  "name": "sdmeet-game",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "cd backend && npm install && npx prisma generate",
+    "start": "cd backend && npx prisma db push && node prisma/seed.js && node src/index.js"
+  }
+}
