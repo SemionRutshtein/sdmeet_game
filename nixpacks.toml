@@ -7,4 +7,4 @@ cmds = ["cd backend && npm ci --omit=dev"]
 cmds = ["cd backend && npx prisma generate"]
 
 [start]
-cmd = "cd backend && npx prisma db push --skip-generate --accept-data-loss && node prisma/seed.js && node src/index.js"
+cmd = "cd backend && node prisma/migrate.js && node prisma/seed.js && node src/index.js"
