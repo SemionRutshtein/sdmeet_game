@@ -19,13 +19,12 @@ const io = new Server(httpServer, {
 app.use(cors());
 app.use(express.json());
 
-// Serve frontend from /frontend relative to project root
-const frontendPath = path.join(__dirname, '../../frontend');
+// Serve frontend — works both locally (../../frontend) and in Railway (../public)
+const frontendPath = path.join(__dirname, '../public');
 app.use(express.static(frontendPath));
 
 app.use('/api', roomRouter);
 
-// Fallback: all non-API routes serve index.html
 app.get('*', (req, res) => {
   if (!req.path.startsWith('/api')) {
     res.sendFile(path.join(frontendPath, 'index.html'));

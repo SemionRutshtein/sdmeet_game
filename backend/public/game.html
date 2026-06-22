@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>SDMeet — Игра</title>
+  <style>
+    :root {
+      --bg: #0C0C0F;
+      --surface: #111115;
+      --surface2: #16161A;
+      --border: rgba(255,255,255,0.07);
+      --gold: #C9A84C;
+      --gold-dim: rgba(201,168,76,0.15);
+      --text: #EDE9E4;
+      --muted: #5A5760;
+      --active: #1A1A20;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Georgia', 'Times New Roman', serif;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem;
+    }
+
+    /* Header */
+    .header {
+      width: 100%;
+      max-width: 420px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0 1rem;
+    }
+    .logo { font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); }
+    .turn-info { font-size: 0.7rem; font-family: Arial, sans-serif; color: var(--muted); }
+
+    /* Progress bar */
+    .progress-wrap {
+      width: 100%;
+      max-width: 420px;
+      height: 2px;
+      background: var(--border);
+      border-radius: 1px;
+      margin-bottom: 1.25rem;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #8A6E2F, #C9A84C);
+      border-radius: 1px;
+      transition: width 0.6s ease;
+    }
+
+    /* Level pill */
+    .level-pill {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-family: Arial, sans-serif;
+      padding: 0.3rem 0.75rem;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      margin-bottom: 1rem;
+      align-self: flex-start;
+      width: 100%;
+      max-width: 420px;
+    }
+    .level-pill.l1 { color: #7AAA7A; border-color: rgba(122,170,122,0.25); }
+    .level-pill.l2 { color: #7A9EBB; border-color: rgba(122,158,187,0.25); }
+    .level-pill.l3 { color: var(--gold); border-color: rgba(201,168,76,0.25); }
+
+    /* Main card */
+    .card {
+      width: 100%;
+      max-width: 420px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.75rem 1.5rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .whose-turn {
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-family: Arial, sans-serif;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+    .whose-name {
+      font-size: 1.05rem;
+      color: var(--gold);
+      margin-bottom: 1.25rem;
+    }
+
+    .content-text {
+      font-size: 1.2rem;
+      line-height: 1.65;
+      color: var(--text);
+      flex: 1;
+      padding-bottom: 1.5rem;
+    }
+    .content-text.task-mode {
+      color: #B8C8D8;
+    }
+    .content-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-family: Arial, sans-serif;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+
+    /* Status messages (passive player) */
+    .status-msg {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-family: Arial, sans-serif;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+    .dot-small {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--gold); flex-shrink: 0;
+      animation: blink 1.5s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+    /* Buttons */
+    .btn-group { display: flex; flex-direction: column; gap: 0.6rem; margin-top: auto; }
+    .btn {
+      width: 100%;
+      padding: 0.9rem;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-family: Arial, sans-serif;
+      letter-spacing: 0.04em;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .btn-gold {
+      background: linear-gradient(135deg, #C9A84C, #8A6E2F);
+      color: #0C0C0F; font-weight: 700;
+    }
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .btn-approve {
+      background: rgba(201,168,76,0.1);
+      border: 1px solid rgba(201,168,76,0.35);
+      color: var(--gold); font-weight: 600;
+    }
+
+    /* Players bar */
+    .players-bar {
+      width: 100%;
+      max-width: 420px;
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .player-chip {
+      flex: 1;
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      font-size: 0.78rem;
+      font-family: Arial, sans-serif;
+      color: var(--muted);
+      text-align: center;
+      transition: all 0.3s;
+    }
+    .player-chip.active {
+      border-color: rgba(201,168,76,0.4);
+      color: var(--gold);
+      background: rgba(201,168,76,0.06);
+    }
+
+    /* Game finished */
+    .finished-card {
+      width: 100%;
+      max-width: 420px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2.5rem 1.75rem;
+      text-align: center;
+    }
+    .finished-card h2 { font-size: 1.5rem; font-weight: 400; margin-bottom: 0.75rem; }
+    .finished-card p { color: var(--muted); font-size: 0.9rem; font-family: Arial, sans-serif; line-height: 1.6; }
+
+    .toast {
+      position: fixed;
+      bottom: 2rem; left: 50%; transform: translateX(-50%);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.6rem 1.25rem;
+      font-size: 0.8rem;
+      font-family: Arial, sans-serif;
+      color: var(--muted);
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .toast.show { opacity: 1; }
+
+    .hidden { display: none !important; }
+    .fade-in { animation: fadeIn 0.4s ease; }
+    @keyframes fadeIn { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform:none; } }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">SDMeet</div>
+    <div class="turn-info" id="turn-counter">Ход 0 / 20</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+  </div>
+
+  <div class="players-bar" id="players-bar">
+    <div class="player-chip" id="chip-p1">Игрок 1</div>
+    <div class="player-chip" id="chip-p2">Игрок 2</div>
+  </div>
+
+  <div class="level-pill" id="level-pill">Уровень 1 — Знакомство</div>
+
+  <!-- Main game card -->
+  <div class="card" id="game-card">
+    <div class="whose-turn" id="whose-turn-label">Ход</div>
+    <div class="whose-name" id="whose-name">—</div>
+
+    <!-- Content area -->
+    <div id="content-area">
+      <div class="content-label" id="content-label">Вопрос</div>
+      <div class="content-text" id="content-text"></div>
+    </div>
+
+    <!-- Status (passive player waiting) -->
+    <div class="status-msg hidden" id="status-msg">
+      <div class="dot-small"></div>
+      <span id="status-text">Ожидаем…</span>
+    </div>
+
+    <div class="btn-group" id="btn-group"></div>
+  </div>
+
+  <!-- Finished screen (hidden initially) -->
+  <div class="finished-card hidden" id="finished-card">
+    <div style="font-size:2rem;margin-bottom:1rem">✦</div>
+    <h2>Вечер удался</h2>
+    <p style="margin-top:1rem">Вы прошли все уровни близости.<br>Надеемся, этот вечер стал особенным.</p>
+    <button class="btn btn-ghost" style="margin-top:2rem;width:100%" onclick="location.href='/'">Новая игра</button>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    // --- Session ---
+    const params = new URLSearchParams(location.search);
+    const ROOM_ID = params.get('room');
+    const PLAYER_ID = params.get('player');
+    const PLAYER_NUM = parseInt(params.get('num'));
+
+    if (!ROOM_ID || !PLAYER_ID) {
+      location.href = '/';
+    }
+
+    const socket = io();
+
+    // State
+    let myPlayerNum = PLAYER_NUM;
+    let activePlayerNum = null;
+    let players = []; // [{id, name, playerNum}]
+    let totalTurns = 20;
+    let currentLevel = 1;
+
+    const LEVEL_LABELS = {
+      1: 'Уровень 1 — Знакомство',
+      2: 'Уровень 2 — Личное',
+      3: 'Уровень 3 — Здесь и сейчас'
+    };
+    const LEVEL_CLASSES = { 1: 'l1', 2: 'l2', 3: 'l3' };
+
+    // --- DOM refs ---
+    const $ = id => document.getElementById(id);
+    const turnCounter = $('turn-counter');
+    const progressBar = $('progress-bar');
+    const chipP1 = $('chip-p1');
+    const chipP2 = $('chip-p2');
+    const levelPill = $('level-pill');
+    const whoseTurnLabel = $('whose-turn-label');
+    const whoseName = $('whose-name');
+    const contentLabel = $('content-label');
+    const contentText = $('content-text');
+    const contentArea = $('content-area');
+    const statusMsg = $('status-msg');
+    const statusText = $('status-text');
+    const btnGroup = $('btn-group');
+    const gameCard = $('game-card');
+    const finishedCard = $('finished-card');
+
+    // --- Connect ---
+    socket.on('connect', () => {
+      // Reconnect flow: re-announce ourselves
+      socket.emit('wait_in_room', { roomId: ROOM_ID, playerId: PLAYER_ID });
+    });
+
+    // Reconnect resync
+    socket.on('resync', ({ room, content }) => {
+      players = room.players;
+      totalTurns = 20;
+      activePlayerNum = room.activePlayerNum;
+      updatePlayerChips();
+
+      if (!content) return;
+      const { round, question, task } = content;
+      currentLevel = question ? question.level : (task ? task.level : 1);
+      updateMeta(room.turnNum, room.turnNum / totalTurns * 100, currentLevel);
+
+      if (round.state === 'QUESTION_SHOWN') {
+        renderQuestion(question, round);
+      } else if (round.state === 'PLAYER_ANSWERED') {
+        renderQuestion(question, round);
+        renderWaitingApproval('answer');
+      } else if (round.state === 'TASK_SHOWN') {
+        renderTask(task, round);
+      } else if (round.state === 'TASK_DONE') {
+        renderTask(task, round);
+        renderWaitingApproval('task');
+      }
+    });
+
+    // P2's rejoined event
+    socket.on('rejoined', ({ playerNum, playerName, room, content }) => {
+      myPlayerNum = playerNum;
+      players = room.players;
+      activePlayerNum = room.activePlayerNum;
+      updatePlayerChips();
+
+      if (!content) return;
+      const { round, question, task } = content;
+      currentLevel = question ? question.level : (task ? task.level : 1);
+      updateMeta(room.turnNum, room.turnNum / totalTurns * 100, currentLevel);
+
+      if (round.state === 'QUESTION_SHOWN') renderQuestion(question, round);
+      else if (round.state === 'PLAYER_ANSWERED') { renderQuestion(question, round); renderWaitingApproval('answer'); }
+      else if (round.state === 'TASK_SHOWN') renderTask(task, round);
+      else if (round.state === 'TASK_DONE') { renderTask(task, round); renderWaitingApproval('task'); }
+    });
+
+    // New turn
+    socket.on('turn_started', ({ question, activePlayer, players: ps, turnNum, totalTurns: tt, level }) => {
+      players = ps;
+      totalTurns = tt || 20;
+      activePlayerNum = activePlayer.playerNum;
+      currentLevel = level;
+
+      updateMeta(turnNum, (turnNum / totalTurns) * 100, level);
+      updatePlayerChips();
+      renderQuestion(question, null);
+    });
+
+    // Active player answered — passive sees approve button
+    socket.on('waiting_approval', ({ type }) => {
+      renderWaitingApproval(type);
+    });
+
+    // Task shown
+    socket.on('task_shown', ({ task }) => {
+      renderTask(task, null);
+    });
+
+    // Game over
+    socket.on('game_finished', () => {
+      gameCard.classList.add('hidden');
+      finishedCard.classList.remove('hidden');
+      localStorage.removeItem('sdmeet_session');
+    });
+
+    socket.on('error', ({ message }) => {
+      showToast(message);
+    });
+
+    // --- Rendering ---
+
+    function isMyTurn() {
+      return myPlayerNum === activePlayerNum;
+    }
+
+    function getActivePlayerName() {
+      const p = players.find(p => p.playerNum === activePlayerNum);
+      return p ? p.name : '—';
+    }
+
+    function getMyName() {
+      const p = players.find(p => p.playerNum === myPlayerNum);
+      return p ? p.name : '—';
+    }
+
+    function renderQuestion(question, round) {
+      fadeIn(contentArea);
+      contentArea.classList.remove('hidden');
+      statusMsg.classList.add('hidden');
+
+      contentLabel.textContent = 'Вопрос';
+      contentText.className = 'content-text fade-in';
+      contentText.textContent = question ? question.text : '';
+
+      if (isMyTurn()) {
+        whoseTurnLabel.textContent = 'Ваш ход';
+        whoseName.textContent = getMyName();
+        setBtns([
+          makeBtn('btn-gold', '✓ Ответил(а)', () => {
+            disableAllBtns();
+            socket.emit('player_answered', { roomId: ROOM_ID });
+          }),
+          makeBtn('btn-ghost', 'Не хочу — взять задание', () => {
+            disableAllBtns();
+            socket.emit('skip_question', { roomId: ROOM_ID });
+          })
+        ]);
+      } else {
+        whoseTurnLabel.textContent = 'Ход партнёра';
+        whoseName.textContent = getActivePlayerName();
+        setBtns([]);
+        showStatus(`${getActivePlayerName()} отвечает на вопрос…`);
+      }
+    }
+
+    function renderWaitingApproval(type) {
+      if (isMyTurn()) {
+        // I'm the one who answered/did task — now waiting
+        hideStatus();
+        setBtns([]);
+        showStatus(`Ждём подтверждения партнёра…`);
+      } else {
+        // I'm the approver
+        const label = type === 'task' ? 'выполнил(а) задание' : 'ответил(а)';
+        showStatus(`${getActivePlayerName()} ${label}`);
+        setBtns([
+          makeBtn('btn-approve', '✓ Засчитано', () => {
+            disableAllBtns();
+            socket.emit('approve', { roomId: ROOM_ID });
+          })
+        ]);
+      }
+    }
+
+    function renderTask(task, round) {
+      fadeIn(contentArea);
+      contentArea.classList.remove('hidden');
+      statusMsg.classList.add('hidden');
+
+      contentLabel.textContent = 'Задание';
+      contentText.className = 'content-text task-mode fade-in';
+      contentText.textContent = task ? task.text : '';
+
+      if (isMyTurn()) {
+        whoseTurnLabel.textContent = 'Ваше задание';
+        whoseName.textContent = getMyName();
+        setBtns([
+          makeBtn('btn-gold', '✓ Выполнил(а)', () => {
+            disableAllBtns();
+            socket.emit('task_done', { roomId: ROOM_ID });
+          })
+        ]);
+      } else {
+        whoseTurnLabel.textContent = 'Задание партнёра';
+        whoseName.textContent = getActivePlayerName();
+        setBtns([]);
+        showStatus(`${getActivePlayerName()} выполняет задание…`);
+      }
+    }
+
+    // --- Helpers ---
+
+    function updateMeta(turnNum, pct, level) {
+      turnCounter.textContent = `Ход ${turnNum + 1} / ${totalTurns}`;
+      progressBar.style.width = `${Math.min(pct, 100)}%`;
+      levelPill.textContent = LEVEL_LABELS[level] || '';
+      levelPill.className = `level-pill ${LEVEL_CLASSES[level] || ''}`;
+    }
+
+    function updatePlayerChips() {
+      players.forEach(p => {
+        const chip = p.playerNum === 1 ? chipP1 : chipP2;
+        chip.textContent = p.name;
+        chip.classList.toggle('active', p.playerNum === activePlayerNum);
+      });
+    }
+
+    function makeBtn(cls, text, onClick) {
+      const b = document.createElement('button');
+      b.className = `btn ${cls}`;
+      b.textContent = text;
+      b.addEventListener('click', onClick);
+      return b;
+    }
+
+    function setBtns(btns) {
+      btnGroup.innerHTML = '';
+      btns.forEach(b => btnGroup.appendChild(b));
+    }
+
+    function disableAllBtns() {
+      btnGroup.querySelectorAll('button').forEach(b => b.disabled = true);
+    }
+
+    function showStatus(text) {
+      statusText.textContent = text;
+      statusMsg.classList.remove('hidden');
+    }
+
+    function hideStatus() {
+      statusMsg.classList.add('hidden');
+    }
+
+    function fadeIn(el) {
+      el.classList.remove('fade-in');
+      void el.offsetWidth;
+      el.classList.add('fade-in');
+    }
+
+    function showToast(msg) {
+      const t = $('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+  </script>
+</body>
+</html>
