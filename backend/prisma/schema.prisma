@@ -1,0 +1,69 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum RoomState {
+  WAITING_FOR_P2
+  GAME_STARTED
+  FINISHED
+}
+
+enum RoundState {
+  QUESTION_SHOWN
+  PLAYER_ANSWERED
+  TASK_SHOWN
+  TASK_DONE
+  APPROVED
+}
+
+model Room {
+  id              String    @id @default(uuid())
+  createdAt       DateTime  @default(now())
+  state           RoomState @default(WAITING_FOR_P2)
+  turnNum         Int       @default(0)
+  activePlayerNum Int       @default(1)
+
+  players Player[]
+  rounds  Round[]
+}
+
+model Player {
+  id        String @id @default(uuid())
+  name      String
+  roomId    String
+  playerNum Int
+
+  room   Room    @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  rounds Round[]
+}
+
+model Round {
+  id         String     @id @default(uuid())
+  roomId     String
+  playerId   String
+  questionId Int?
+  taskId     Int?
+  usedTask   Boolean    @default(false)
+  state      RoundState @default(QUESTION_SHOWN)
+  turnNum    Int
+
+  room   Room   @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  player Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+}
+
+model Question {
+  id    Int    @id @default(autoincrement())
+  level Int
+  text  String
+}
+
+model Task {
+  id    Int    @id @default(autoincrement())
+  level Int
+  text  String
+}

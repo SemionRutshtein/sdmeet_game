@@ -1,0 +1,29 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: sdmeet
+      POSTGRES_PASSWORD: sdmeet
+      POSTGRES_DB: sdmeet
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  app:
+    build:
+      context: .          # project root — gives Docker access to both /backend and /frontend
+      dockerfile: backend/Dockerfile
+    environment:
+      DATABASE_URL: postgresql://sdmeet:sdmeet@db:5432/sdmeet
+      PORT: 3000
+      TOTAL_TURNS: 20
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+
+volumes:
+  pgdata:

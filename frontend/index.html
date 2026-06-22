@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>SDMeet — Игра для двоих</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --bg: #0C0C0F;
+      --surface: #111115;
+      --border: rgba(255,255,255,0.07);
+      --gold: #C9A84C;
+      --gold-dim: #8A6E2F;
+      --text: #EDE9E4;
+      --muted: #5A5760;
+      --danger: #8B3A3A;
+    }
+    * { box-sizing: border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Georgia', 'Times New Roman', serif;
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem 1.75rem;
+      width: 100%;
+      max-width: 400px;
+    }
+    .logo {
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 400;
+      line-height: 1.3;
+      margin-bottom: 0.5rem;
+    }
+    .subtitle {
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-family: 'Arial', sans-serif;
+      margin-bottom: 2rem;
+      line-height: 1.5;
+    }
+    label {
+      display: block;
+      font-size: 0.72rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+      font-family: 'Arial', sans-serif;
+    }
+    input[type="text"] {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      color: var(--text);
+      font-size: 1rem;
+      font-family: 'Georgia', serif;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input[type="text"]:focus {
+      border-color: var(--gold-dim);
+    }
+    input[type="text"]::placeholder { color: var(--muted); }
+    .btn {
+      width: 100%;
+      padding: 0.85rem;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-family: 'Arial', sans-serif;
+      letter-spacing: 0.05em;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-gold {
+      background: linear-gradient(135deg, #C9A84C, #8A6E2F);
+      color: #0C0C0F;
+      font-weight: 600;
+    }
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      margin-top: 0.75rem;
+    }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 1.5rem 0;
+      color: var(--muted);
+      font-size: 0.75rem;
+      font-family: 'Arial', sans-serif;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .copy-box {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(201,168,76,0.08);
+      border: 1px solid rgba(201,168,76,0.2);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      margin-top: 1.5rem;
+    }
+    .copy-box span {
+      flex: 1;
+      font-size: 0.78rem;
+      color: var(--gold);
+      font-family: monospace;
+      word-break: break-all;
+    }
+    .copy-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--gold);
+      font-size: 0.75rem;
+      font-family: 'Arial', sans-serif;
+      white-space: nowrap;
+      padding: 0.25rem 0.5rem;
+    }
+    .pulse {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-family: 'Arial', sans-serif;
+      margin-top: 1.25rem;
+    }
+    .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--gold);
+      animation: blink 1.5s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+    .err { color: #c45; font-size: 0.8rem; font-family: 'Arial', sans-serif; margin-top: 0.5rem; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <!-- SCREEN: Create or Join -->
+  <div id="screen-home" class="card">
+    <div class="logo">SDMeet</div>
+    <h1>Игра для&nbsp;свидания</h1>
+    <p class="subtitle">Вопросы, которые сближают. От лёгкого флирта до настоящей близости.</p>
+
+    <div id="home-create">
+      <label for="name-create">Ваше имя</label>
+      <input id="name-create" type="text" placeholder="Введите имя" maxlength="30" autocomplete="off" />
+      <p id="err-create" class="err hidden"></p>
+      <button id="btn-create" class="btn btn-gold" style="margin-top:1rem">Создать игру</button>
+
+      <div class="divider">или</div>
+
+      <div id="join-section">
+        <label for="name-join">Ваше имя</label>
+        <input id="name-join" type="text" placeholder="Введите имя" maxlength="30" autocomplete="off" />
+        <p id="err-join" class="err hidden"></p>
+        <button id="btn-join" class="btn btn-ghost" style="margin-top:0.75rem">Присоединиться по ссылке</button>
+        <p style="font-size:0.75rem;color:var(--muted);font-family:Arial,sans-serif;margin-top:0.5rem;text-align:center">
+          Перейдите по ссылке, которую отправил(а) партнёр
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN: Waiting for P2 -->
+  <div id="screen-wait" class="card hidden">
+    <div class="logo">SDMeet</div>
+    <h1>Ждём партнёра…</h1>
+    <p class="subtitle">Отправьте эту ссылку тому, с кем хотите сыграть.</p>
+
+    <div class="copy-box">
+      <span id="share-url"></span>
+      <button class="copy-btn" onclick="copyLink()">Копировать</button>
+    </div>
+    <div class="pulse">
+      <div class="dot"></div>
+      <span>Ожидание подключения</span>
+    </div>
+  </div>
+
+  <!-- SCREEN: Join (pre-filled roomId from URL) -->
+  <div id="screen-join" class="card hidden">
+    <div class="logo">SDMeet</div>
+    <h1>Вас пригласили!</h1>
+    <p class="subtitle">Введите имя, чтобы начать игру с партнёром.</p>
+
+    <label for="name-join2">Ваше имя</label>
+    <input id="name-join2" type="text" placeholder="Введите имя" maxlength="30" autocomplete="off" />
+    <p id="err-join2" class="err hidden"></p>
+    <button id="btn-join2" class="btn btn-gold" style="margin-top:1rem">Войти в игру</button>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const params = new URLSearchParams(location.search);
+    const joinRoomId = params.get('join');
+
+    // Restore session
+    const session = JSON.parse(localStorage.getItem('sdmeet_session') || 'null');
+
+    // If we have a session, try to reconnect to game directly
+    if (session && !joinRoomId) {
+      window.location.href = `/game.html?room=${session.roomId}&player=${session.playerId}&num=${session.playerNum}`;
+    }
+
+    // Determine which screen to show
+    if (joinRoomId) {
+      // Check if already in session for this room
+      if (session && session.roomId === joinRoomId) {
+        window.location.href = `/game.html?room=${joinRoomId}&player=${session.playerId}&num=${session.playerNum}`;
+      } else {
+        show('screen-join');
+      }
+    } else {
+      show('screen-home');
+    }
+
+    function show(id) {
+      document.querySelectorAll('[id^="screen-"]').forEach(el => el.classList.add('hidden'));
+      document.getElementById(id).classList.remove('hidden');
+    }
+
+    // --- Create room ---
+    document.getElementById('btn-create').addEventListener('click', async () => {
+      const name = document.getElementById('name-create').value.trim();
+      if (!name) return showErr('err-create', 'Введите имя');
+
+      const btn = document.getElementById('btn-create');
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/rooms', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ playerName: name })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+
+        localStorage.setItem('sdmeet_session', JSON.stringify({
+          roomId: data.roomId,
+          playerId: data.playerId,
+          playerNum: 1,
+          playerName: name
+        }));
+
+        const link = `${location.origin}/?join=${data.roomId}`;
+        document.getElementById('share-url').textContent = link;
+        show('screen-wait');
+
+        socket.emit('wait_in_room', { roomId: data.roomId, playerId: data.playerId });
+      } catch (e) {
+        showErr('err-create', e.message);
+        btn.disabled = false;
+      }
+    });
+
+    // --- Join via screen-join (URL had ?join=) ---
+    document.getElementById('btn-join2').addEventListener('click', async () => {
+      const name = document.getElementById('name-join2').value.trim();
+      if (!name) return showErr('err-join2', 'Введите имя');
+
+      const btn = document.getElementById('btn-join2');
+      btn.disabled = true;
+
+      socket.emit('join_room', { roomId: joinRoomId, playerName: name });
+    });
+
+    socket.on('joined', ({ playerId, playerNum, playerName }) => {
+      localStorage.setItem('sdmeet_session', JSON.stringify({
+        roomId: joinRoomId,
+        playerId,
+        playerNum,
+        playerName
+      }));
+      window.location.href = `/game.html?room=${joinRoomId}&player=${playerId}&num=${playerNum}`;
+    });
+
+    // P1 gets notified that P2 joined → redirect to game
+    socket.on('partner_joined', () => {
+      const s = JSON.parse(localStorage.getItem('sdmeet_session'));
+      window.location.href = `/game.html?room=${s.roomId}&player=${s.playerId}&num=${s.playerNum}`;
+    });
+
+    socket.on('error', ({ message }) => {
+      showErr('err-join2', message);
+      document.getElementById('btn-join2').disabled = false;
+    });
+
+    // If P1 somehow gets resync signal (game already started)
+    socket.on('resync', () => {
+      const s = JSON.parse(localStorage.getItem('sdmeet_session'));
+      if (s) window.location.href = `/game.html?room=${s.roomId}&player=${s.playerId}&num=${s.playerNum}`;
+    });
+
+    function copyLink() {
+      const url = document.getElementById('share-url').textContent;
+      navigator.clipboard.writeText(url).catch(() => {});
+    }
+
+    function showErr(id, msg) {
+      const el = document.getElementById(id);
+      el.textContent = msg;
+      el.classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
