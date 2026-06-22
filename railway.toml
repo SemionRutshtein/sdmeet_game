@@ -3,7 +3,7 @@ builder = "dockerfile"
 dockerfilePath = "backend/Dockerfile"
 
 [deploy]
-startCommand = "npx prisma db push && node prisma/seed.js && node src/index.js"
+startCommand = "cd backend && npx prisma db push --skip-generate --accept-data-loss && node prisma/seed.js && node src/index.js"
 healthcheckPath = "/"
 healthcheckTimeout = 30
 restartPolicyType = "on_failure"
