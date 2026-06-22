@@ -3,7 +3,6 @@ builder = "dockerfile"
 dockerfilePath = "backend/Dockerfile"
 
 [deploy]
-startCommand = "cd backend && node prisma/migrate.js && node prisma/seed.js && node src/index.js"
 healthcheckPath = "/"
-healthcheckTimeout = 120
+healthcheckTimeout = 60
 restartPolicyType = "on_failure"

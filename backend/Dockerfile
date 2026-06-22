@@ -12,11 +12,9 @@ RUN cd backend && npx prisma generate
 
 # Copy source
 COPY backend/src ./backend/src
-
-# Copy frontend (served as static files)
-COPY frontend ./frontend
+COPY backend/public ./backend/public
 
 WORKDIR /app/backend
 
 EXPOSE 3000
-CMD ["sh", "-c", "npx prisma db push && node prisma/seed.js && node src/index.js"]
+CMD ["sh", "-c", "node prisma/migrate.js && node prisma/seed.js && node src/index.js"]
