@@ -27,6 +27,7 @@ model Room {
   state           RoomState @default(WAITING_FOR_P2)
   turnNum         Int       @default(0)
   activePlayerNum Int       @default(1)
+  inviteMessage   String?
 
   players Player[]
   rounds  Round[]

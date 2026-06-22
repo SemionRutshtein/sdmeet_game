@@ -64,7 +64,7 @@
       margin-bottom: 0.5rem;
       font-family: 'Arial', sans-serif;
     }
-    input[type="text"] {
+    input[type="text"], textarea {
       width: 100%;
       background: rgba(255,255,255,0.04);
       border: 1px solid var(--border);
@@ -76,10 +76,15 @@
       outline: none;
       transition: border-color 0.2s;
     }
-    input[type="text"]:focus {
+    textarea {
+      resize: none;
+      min-height: 90px;
+      line-height: 1.55;
+    }
+    input[type="text"]:focus, textarea:focus {
       border-color: var(--gold-dim);
     }
-    input[type="text"]::placeholder { color: var(--muted); }
+    input[type="text"]::placeholder, textarea::placeholder { color: var(--muted); }
     .btn {
       width: 100%;
       padding: 0.85rem;
@@ -164,11 +169,40 @@
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
     .err { color: #c45; font-size: 0.8rem; font-family: 'Arial', sans-serif; margin-top: 0.5rem; }
     .hidden { display: none !important; }
+
+    /* Invite message bubble on join screen */
+    .invite-bubble {
+      background: rgba(201,168,76,0.07);
+      border: 1px solid rgba(201,168,76,0.18);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+    .invite-bubble .from {
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      font-family: 'Arial', sans-serif;
+      margin-bottom: 0.4rem;
+    }
+    .invite-bubble .msg {
+      font-size: 0.95rem;
+      color: var(--text);
+      line-height: 1.6;
+    }
+    .char-count {
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-family: 'Arial', sans-serif;
+      text-align: right;
+      margin-top: 0.3rem;
+    }
   </style>
 </head>
 <body>
   <!-- SCREEN: Create or Join -->
-  <div id="screen-home" class="card">
+  <div id="screen-home" class="card hidden">
     <div class="logo">SDMeet</div>
     <h1>Игра для&nbsp;свидания</h1>
     <p class="subtitle">Вопросы, которые сближают. От лёгкого флирта до настоящей близости.</p>
@@ -177,7 +211,14 @@
       <label for="name-create">Ваше имя</label>
       <input id="name-create" type="text" placeholder="Введите имя" maxlength="30" autocomplete="off" />
       <p id="err-create" class="err hidden"></p>
-      <button id="btn-create" class="btn btn-gold" style="margin-top:1rem">Создать игру</button>
+
+      <div style="margin-top:1.25rem">
+        <label for="invite-msg">Сообщение для партнёра <span style="font-size:0.65rem;opacity:0.5">(необязательно)</span></label>
+        <textarea id="invite-msg" placeholder="Напишите что-то личное — партнёр увидит это перед входом в игру…" maxlength="200"></textarea>
+        <div class="char-count"><span id="char-left">200</span> симв. осталось</div>
+      </div>
+
+      <button id="btn-create" class="btn btn-gold" style="margin-top:1.25rem">Создать игру</button>
 
       <div class="divider">или</div>
 
@@ -213,7 +254,13 @@
   <div id="screen-join" class="card hidden">
     <div class="logo">SDMeet</div>
     <h1>Вас пригласили!</h1>
-    <p class="subtitle">Введите имя, чтобы начать игру с партнёром.</p>
+    <p id="join-subtitle" class="subtitle">Введите имя, чтобы начать игру с партнёром.</p>
+
+    <!-- Invite message from host (shown only if present) -->
+    <div id="invite-display" class="invite-bubble hidden">
+      <div class="from" id="invite-from">От партнёра</div>
+      <div class="msg" id="invite-msg-text"></div>
+    </div>
 
     <label for="name-join2">Ваше имя</label>
     <input id="name-join2" type="text" placeholder="Введите имя" maxlength="30" autocomplete="off" />
@@ -247,9 +294,24 @@
             window.location.href = `/game.html?room=${joinRoomId}&player=${session.playerId}&num=${session.playerNum}`;
             return;
           }
-          // Room finished or gone — clear stale session, show join form
           localStorage.removeItem('sdmeet_session');
         }
+
+        // Load room info to show invite message
+        try {
+          const r = await fetch(`/api/rooms/${joinRoomId}`);
+          if (r.ok) {
+            const data = await r.json();
+            if (data.inviteMessage) {
+              const from = data.hostName ? `Сообщение от ${data.hostName}` : 'Сообщение от партнёра';
+              document.getElementById('invite-from').textContent = from;
+              document.getElementById('invite-msg-text').textContent = data.inviteMessage;
+              document.getElementById('invite-display').classList.remove('hidden');
+              document.getElementById('join-subtitle').textContent = 'Прочитайте сообщение и введите имя, чтобы начать.';
+            }
+          }
+        } catch {}
+
         show('screen-join');
         return;
       }
@@ -274,11 +336,17 @@
       document.getElementById(id).classList.remove('hidden');
     }
 
+    // Char counter for invite message
+    document.getElementById('invite-msg').addEventListener('input', function() {
+      document.getElementById('char-left').textContent = 200 - this.value.length;
+    });
+
     // --- Create room ---
     document.getElementById('btn-create').addEventListener('click', async () => {
       const name = document.getElementById('name-create').value.trim();
       if (!name) return showErr('err-create', 'Введите имя');
 
+      const inviteMessage = document.getElementById('invite-msg').value.trim();
       const btn = document.getElementById('btn-create');
       btn.disabled = true;
 
@@ -286,7 +354,7 @@
         const res = await fetch('/api/rooms', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ playerName: name })
+          body: JSON.stringify({ playerName: name, inviteMessage: inviteMessage || null })
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error);

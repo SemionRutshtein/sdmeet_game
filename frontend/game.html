@@ -229,6 +229,61 @@
     }
     .toast.show { opacity: 1; }
 
+    /* New game confirm modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      z-index: 100;
+      backdrop-filter: blur(4px);
+    }
+    .modal-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.75rem 1.5rem;
+      width: 100%;
+      max-width: 340px;
+      text-align: center;
+    }
+    .modal-box h3 {
+      font-size: 1.15rem;
+      font-weight: 400;
+      margin-bottom: 0.5rem;
+    }
+    .modal-box p {
+      font-size: 0.83rem;
+      color: var(--muted);
+      font-family: Arial, sans-serif;
+      line-height: 1.55;
+      margin-bottom: 1.5rem;
+    }
+    .modal-actions { display: flex; flex-direction: column; gap: 0.6rem; }
+    .btn-danger {
+      background: rgba(139,58,58,0.25);
+      border: 1px solid rgba(180,60,60,0.4);
+      color: #D97070;
+      font-weight: 600;
+    }
+
+    .new-game-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-family: Arial, sans-serif;
+      letter-spacing: 0.08em;
+      padding: 0.3rem 0.5rem;
+      border-radius: 4px;
+      transition: color 0.2s;
+    }
+    .new-game-btn:hover { color: var(--text); }
+
     .hidden { display: none !important; }
     .fade-in { animation: fadeIn 0.4s ease; }
     @keyframes fadeIn { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform:none; } }
@@ -237,7 +292,22 @@
 <body>
   <div class="header">
     <div class="logo">SDMeet</div>
-    <div class="turn-info" id="turn-counter">Ход 0 / 20</div>
+    <div style="display:flex;align-items:center;gap:0.75rem">
+      <div class="turn-info" id="turn-counter">Ход 0 / 20</div>
+      <button class="new-game-btn" id="btn-new-game" title="Начать заново">↺ Новая</button>
+    </div>
+  </div>
+
+  <!-- Confirm new game modal -->
+  <div class="modal-overlay hidden" id="modal-new-game">
+    <div class="modal-box">
+      <h3>Начать новую игру?</h3>
+      <p>Текущая игра будет завершена. Оба игрока вернутся на главный экран.</p>
+      <div class="modal-actions">
+        <button class="btn btn-danger" id="modal-confirm">Да, начать заново</button>
+        <button class="btn btn-ghost" id="modal-cancel">Отмена</button>
+      </div>
+    </div>
   </div>
   <div class="progress-wrap">
     <div class="progress-bar" id="progress-bar" style="width:0%"></div>
@@ -275,7 +345,8 @@
     <div style="font-size:2rem;margin-bottom:1rem">✦</div>
     <h2>Вечер удался</h2>
     <p style="margin-top:1rem">Вы прошли все уровни близости.<br>Надеемся, этот вечер стал особенным.</p>
-    <button class="btn btn-ghost" style="margin-top:2rem;width:100%" onclick="location.href='/'">Новая игра</button>
+    <button class="btn btn-gold" style="margin-top:2rem;width:100%" onclick="startNewGame()">Новая игра</button>
+    <button class="btn btn-ghost" style="margin-top:0.6rem;width:100%" onclick="location.href='/'">На главную</button>
   </div>
 
   <div class="toast" id="toast"></div>
@@ -554,6 +625,32 @@
       t.classList.add('show');
       setTimeout(() => t.classList.remove('show'), 3000);
     }
+
+    // --- New game ---
+    function startNewGame() {
+      localStorage.removeItem('sdmeet_session');
+      location.href = '/';
+    }
+
+    $('btn-new-game').addEventListener('click', () => {
+      $('modal-new-game').classList.remove('hidden');
+    });
+
+    $('modal-cancel').addEventListener('click', () => {
+      $('modal-new-game').classList.add('hidden');
+    });
+
+    $('modal-confirm').addEventListener('click', () => {
+      $('modal-new-game').classList.add('hidden');
+      startNewGame();
+    });
+
+    // Close modal on overlay click
+    $('modal-new-game').addEventListener('click', (e) => {
+      if (e.target === $('modal-new-game')) {
+        $('modal-new-game').classList.add('hidden');
+      }
+    });
   </script>
 </body>
 </html>
