@@ -227,25 +227,47 @@
     const params = new URLSearchParams(location.search);
     const joinRoomId = params.get('join');
 
-    // Restore session
     const session = JSON.parse(localStorage.getItem('sdmeet_session') || 'null');
 
-    // If we have a session, try to reconnect to game directly
-    if (session && !joinRoomId) {
-      window.location.href = `/game.html?room=${session.roomId}&player=${session.playerId}&num=${session.playerNum}`;
+    async function roomIsActive(roomId) {
+      try {
+        const r = await fetch(`/api/rooms/${roomId}`);
+        if (!r.ok) return false;
+        const data = await r.json();
+        return data.state !== 'FINISHED';
+      } catch { return false; }
     }
 
-    // Determine which screen to show
-    if (joinRoomId) {
-      // Check if already in session for this room
-      if (session && session.roomId === joinRoomId) {
-        window.location.href = `/game.html?room=${joinRoomId}&player=${session.playerId}&num=${session.playerNum}`;
-      } else {
+    async function init() {
+      if (joinRoomId) {
+        // P2 flow: session for same room → go straight to game
+        if (session && session.roomId === joinRoomId) {
+          const active = await roomIsActive(joinRoomId);
+          if (active) {
+            window.location.href = `/game.html?room=${joinRoomId}&player=${session.playerId}&num=${session.playerNum}`;
+            return;
+          }
+          // Room finished or gone — clear stale session, show join form
+          localStorage.removeItem('sdmeet_session');
+        }
         show('screen-join');
+        return;
       }
-    } else {
+
+      // P1 flow: have session → try to resume
+      if (session) {
+        const active = await roomIsActive(session.roomId);
+        if (active) {
+          window.location.href = `/game.html?room=${session.roomId}&player=${session.playerId}&num=${session.playerNum}`;
+          return;
+        }
+        localStorage.removeItem('sdmeet_session');
+      }
+
       show('screen-home');
     }
+
+    init();
 
     function show(id) {
       document.querySelectorAll('[id^="screen-"]').forEach(el => el.classList.add('hidden'));

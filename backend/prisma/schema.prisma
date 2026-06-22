@@ -59,11 +59,11 @@ model Round {
 model Question {
   id    Int    @id @default(autoincrement())
   level Int
-  text  String
+  text  String @unique
 }
 
 model Task {
   id    Int    @id @default(autoincrement())
   level Int
-  text  String
+  text  String @unique
 }

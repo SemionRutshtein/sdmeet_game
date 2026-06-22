@@ -200,19 +200,35 @@ const tasks = [
 ];
 
 async function main() {
-  console.log('Seeding questions...');
-  await prisma.question.deleteMany();
-  await prisma.task.deleteMany();
+  const existingQ = await prisma.question.count();
+  const existingT = await prisma.task.count();
 
-  for (const q of questions) {
-    await prisma.question.create({ data: q });
+  // Idempotent: only seed if DB is empty (safe for Railway redeploys)
+  if (existingQ >= questions.length && existingT >= tasks.length) {
+    console.log(`Already seeded (${existingQ} questions, ${existingT} tasks). Skipping.`);
+    return;
   }
-  console.log(`Inserted ${questions.length} questions`);
+
+  console.log('Seeding questions and tasks...');
+
+  // Upsert by text to avoid duplicates on partial re-runs
+  for (const q of questions) {
+    await prisma.question.upsert({
+      where: { text: q.text },
+      update: { level: q.level },
+      create: q
+    });
+  }
+  console.log(`Upserted ${questions.length} questions`);
 
   for (const t of tasks) {
-    await prisma.task.create({ data: t });
+    await prisma.task.upsert({
+      where: { text: t.text },
+      update: { level: t.level },
+      create: t
+    });
   }
-  console.log(`Inserted ${tasks.length} tasks`);
+  console.log(`Upserted ${tasks.length} tasks`);
 }
 
 main()

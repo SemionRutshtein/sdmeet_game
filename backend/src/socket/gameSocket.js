@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 function setupGameSocket(io) {
   io.on('connection', (socket) => {
 
-    // P1 reconnects to waiting room after creating
+    // Both P1 (waiting) and any player reconnecting to an active game use this
     socket.on('wait_in_room', async ({ roomId, playerId }) => {
       try {
         const room = await game.getRoomState(roomId);
@@ -15,22 +15,26 @@ function setupGameSocket(io) {
         socket.join(roomId);
         socket.data = { roomId, playerId };
 
-        if (room.state === 'GAME_STARTED') {
-          // Game already started — resync
-          const content = await game.getRoundWithContent(roomId);
-          socket.emit('resync', { room, content });
-        } else {
-          socket.emit('waiting', { roomId });
+        if (room.state === 'FINISHED') {
+          return socket.emit('game_finished', { players: room.players });
         }
+
+        if (room.state === 'GAME_STARTED') {
+          const content = await game.getRoundWithContent(roomId);
+          return socket.emit('resync', { room, content });
+        }
+
+        // WAITING_FOR_P2
+        socket.emit('waiting', { roomId });
       } catch (err) {
         socket.emit('error', { message: err.message });
       }
     });
 
-    // P2 joins via link
+    // P2 joins via link (or reconnects as existing player)
     socket.on('join_room', async ({ roomId, playerName, playerId }) => {
       try {
-        // Reconnect case: player already exists
+        // Reconnect: player already exists in DB
         if (playerId) {
           const existing = await prisma.player.findUnique({
             where: { id: playerId },
@@ -39,33 +43,37 @@ function setupGameSocket(io) {
           if (existing && existing.roomId === roomId) {
             socket.join(roomId);
             socket.data = { roomId, playerId };
+
+            if (existing.room.state === 'FINISHED') {
+              return socket.emit('game_finished', { players: existing.room.players });
+            }
+
             const content = await game.getRoundWithContent(roomId);
-            socket.emit('rejoined', {
+            return socket.emit('rejoined', {
               playerId: existing.id,
               playerNum: existing.playerNum,
               playerName: existing.name,
               room: existing.room,
               content
             });
-            return;
           }
         }
 
+        // New P2 joining
         const { player, players } = await game.joinRoom(roomId, playerName);
         socket.join(roomId);
         socket.data = { roomId, playerId: player.id };
 
-        // Tell P2 their identity
         socket.emit('joined', {
           playerId: player.id,
           playerNum: 2,
           playerName: player.name
         });
 
-        // Tell everyone game starts
+        // Notify P1 (still on index.html waiting screen)
         io.to(roomId).emit('partner_joined', { players });
 
-        // Kick off turn 0
+        // Start first turn — both players will get this or resync on game.html load
         const turnData = await game.startTurn(roomId);
         io.to(roomId).emit('turn_started', turnData);
 
