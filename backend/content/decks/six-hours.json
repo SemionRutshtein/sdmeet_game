@@ -1,0 +1,81 @@
+{
+  "id": "six-hours",
+  "order": 3,
+  "adult": false,
+  "defaultSelected": false,
+  "icon": "📵",
+  "title": { "ru": "Шесть часов тишины", "en": "Six Hours of Silence", "he": "שש שעות של שקט" },
+  "tagline": {
+    "ru": "Конкретные ситуации: что ты чувствуешь и что делаешь.",
+    "en": "Real situations: what you feel and what you do.",
+    "he": "מצבים אמיתיים: מה את/ה מרגיש/ה ומה את/ה עושה."
+  },
+  "goal": {
+    "ru": "Увидеть, как каждый из нас реагирует, когда связь рвётся.",
+    "en": "See how each of us reacts when the connection drops.",
+    "he": "לראות איך כל אחד מאיתנו מגיב כשהקשר נקטע."
+  },
+  "reveal": {
+    "name": { "ru": "Раскадровка", "en": "Storyboard", "he": "סטוריבורד" },
+    "talk": {
+      "ru": "Давай договоримся о сигнале на этот случай",
+      "en": "Let's agree on a signal for this situation",
+      "he": "בואו נסכם על סימן למקרה כזה"
+    },
+    "ruleSuggested": true,
+    "groups": []
+  },
+  "sceneFields": {
+    "feel": {
+      "type": "multi",
+      "prompt": { "ru": "Что почувствую", "en": "What I'd feel", "he": "מה ארגיש" },
+      "options": [
+        { "id": "anxiety", "w": [1, 0], "label": { "ru": "тревога", "en": "anxiety", "he": "חרדה" } },
+        { "id": "anger", "w": [0, 0], "label": { "ru": "злость", "en": "anger", "he": "כעס" } },
+        { "id": "hurt", "w": [0, 1], "label": { "ru": "обида", "en": "hurt", "he": "עלבון" } },
+        { "id": "jealousy", "w": [1, 0], "label": { "ru": "ревность", "en": "jealousy", "he": "קנאה" } },
+        { "id": "fear", "w": [1, 0], "label": { "ru": "страх", "en": "fear", "he": "פחד" } },
+        { "id": "sadness", "w": [0, 0], "label": { "ru": "грусть", "en": "sadness", "he": "עצב" } },
+        { "id": "relief", "w": [0, 1], "label": { "ru": "облегчение", "en": "relief", "he": "הקלה" } },
+        { "id": "nothing", "w": [0, 1], "exclusive": true, "label": { "ru": "ничего", "en": "nothing", "he": "כלום" } }
+      ]
+    },
+    "do": {
+      "type": "choice",
+      "prompt": { "ru": "Что сделаю", "en": "What I'd do", "he": "מה אעשה" },
+      "options": [
+        { "id": "write-more", "w": [2, 0], "label": { "ru": "пишу ещё", "en": "text again", "he": "כותב/ת שוב" } },
+        { "id": "call", "w": [2, 0], "label": { "ru": "звоню", "en": "call", "he": "מתקשר/ת" } },
+        { "id": "wait", "w": [0, 0], "label": { "ru": "жду", "en": "wait", "he": "מחכה" } },
+        { "id": "ask", "w": [1, 0], "label": { "ru": "спрашиваю прямо", "en": "ask directly", "he": "שואל/ת ישירות" } },
+        { "id": "shut-down", "w": [0, 2], "label": { "ru": "закрываюсь", "en": "shut down", "he": "נסגר/ת" } },
+        { "id": "pretend", "w": [0, 1], "label": { "ru": "делаю вид, что всё ок", "en": "act like it's fine", "he": "עושה כאילו הכול בסדר" } },
+        { "id": "own-thing", "w": [0, 1], "label": { "ru": "занимаюсь своим", "en": "get on with my own stuff", "he": "ממשיך/ה בעניינים שלי" } }
+      ]
+    },
+    "want": {
+      "type": "text",
+      "maxLength": 140,
+      "prompt": { "ru": "Чего хочу от партнёра", "en": "What I want from my partner", "he": "מה אני רוצה מבן/בת הזוג" }
+    }
+  },
+  "stage1": [
+    { "id": "no-reply", "type": "scene", "predictable": true, "prompt": { "ru": "Ты написал(а) что-то важное. Ответа нет 6 часов.", "en": "You wrote something important. Six hours, no reply.", "he": "כתבת משהו חשוב. כבר שש שעות אין תשובה." } },
+    { "id": "cancelled-flight", "type": "scene", "predictable": true, "prompt": { "ru": "Партнёр отменяет прилёт за 2 дня.", "en": "Your partner cancels their trip to you two days before.", "he": "בן/בת הזוג מבטל/ת את הטיסה אליך יומיים לפני." } },
+    { "id": "ex-coffee", "type": "scene", "predictable": true, "prompt": { "ru": "Партнёр между делом говорит, что встретился(ась) на кофе с бывшим(ей).", "en": "Your partner mentions in passing that they met an ex for coffee.", "he": "בן/בת הזוג מזכיר/ה בדרך אגב שנפגש/ה לקפה עם אקס/ית." } },
+    { "id": "bad-vs-best", "type": "scene", "predictable": true, "prompt": { "ru": "У тебя ужасный день, у партнёра — лучший за месяц.", "en": "You're having an awful day; your partner is having their best in a month.", "he": "עובר עליך יום נוראי, ולבן/בת הזוג — היום הכי טוב שלו/ה החודש." } },
+    { "id": "im-fine", "type": "scene", "predictable": true, "prompt": { "ru": "Партнёр явно не в духе и отвечает «всё нормально».", "en": "Your partner is clearly off and says \"I'm fine.\"", "he": "בן/בת הזוג ממש לא במצב רוח ועונה \"הכול בסדר\"." } },
+    { "id": "call-drops", "type": "scene", "predictable": true, "prompt": { "ru": "Ссора по видео, связь обрывается на середине фразы.", "en": "You're arguing on a video call and it cuts out mid-sentence.", "he": "ריב בשיחת וידאו, והחיבור נקטע באמצע משפט." } },
+    { "id": "party-photos", "type": "scene", "predictable": true, "prompt": { "ru": "Партнёр выкладывает фото с вечеринки, о которой ты не знал(а).", "en": "Your partner posts photos from a party you didn't know about.", "he": "בן/בת הזוג מעלה תמונות ממסיבה שלא ידעת עליה." } },
+    { "id": "need-space", "type": "scene", "predictable": true, "prompt": { "ru": "Партнёр пишет: «Мне нужно пару дней побыть одному/одной».", "en": "Your partner texts: \"I need a couple of days to myself.\"", "he": "בן/בת הזוג כותב/ת: \"אני צריך/ה כמה ימים לבד.\"" } }
+  ],
+  "pool": [
+    { "id": "ldr-hardest", "text": { "ru": "Что в отношениях на расстоянии тебе тяжелее всего?", "en": "What's hardest for you in a long-distance relationship?", "he": "מה הכי קשה לך בקשר מרחוק?" } },
+    { "id": "how-often", "text": { "ru": "Как часто тебе нужно меня слышать, чтобы было спокойно?", "en": "How often do you need to hear from me to feel at ease?", "he": "כמה פעמים את/ה צריך/ה לשמוע ממני כדי להרגיש רגוע/ה?" } },
+    { "id": "fight-over", "text": { "ru": "Как ты понимаешь, что ссора закончилась?", "en": "How do you know a fight is over?", "he": "איך את/ה יודע/ת שריב נגמר?" } },
+    { "id": "make-up", "text": { "ru": "Как тебе лучше мириться: словами, делом или временем?", "en": "What's the best way for you to make up: words, actions, or time?", "he": "איך הכי טוב לך להשלים: במילים, במעשים או עם זמן?" } },
+    { "id": "old-wound", "text": { "ru": "Что тебя ранило в прошлых отношениях так, что ты до сих пор на это реагируешь?", "en": "What hurt you in a past relationship so much that you still react to it?", "he": "מה פגע בך בקשר קודם כל כך, שאת/ה עדיין מגיב/ה לזה?" } },
+    { "id": "at-ease", "text": { "ru": "Что я могу делать, чтобы тебе было спокойно, когда мы далеко?", "en": "What can I do to help you feel at ease when we're far apart?", "he": "מה אני יכול/ה לעשות כדי שיהיה לך רגוע כשאנחנו רחוקים?" } },
+    { "id": "would-hurt", "text": { "ru": "Какая моя реакция в ссоре тебя бы сильнее всего задела?", "en": "Which reaction of mine in a fight would hurt you most?", "he": "איזו תגובה שלי בריב הייתה פוגעת בך הכי הרבה?" } }
+  ]
+}

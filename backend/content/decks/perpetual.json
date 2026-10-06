@@ -1,0 +1,210 @@
+{
+  "id": "perpetual",
+  "order": 2,
+  "adult": false,
+  "defaultSelected": true,
+  "labels": true,
+  "icon": "⛰️",
+  "title": { "ru": "69%", "en": "69%", "he": "69%" },
+  "tagline": {
+    "ru": "Различия, с которыми придётся жить.",
+    "en": "The differences you'll have to live with.",
+    "he": "ההבדלים שנצטרך לחיות איתם."
+  },
+  "goal": {
+    "ru": "Рано увидеть «горы» и решить, готовы ли с ними жить.",
+    "en": "Spot the \"mountains\" early and decide whether you're ready to live with them.",
+    "he": "לזהות את ה\"הרים\" מוקדם ולהחליט אם אנחנו מוכנים לחיות איתם."
+  },
+  "reveal": {
+    "name": { "ru": "Карта рельефа", "en": "Relief Map", "he": "מפת תבליט" },
+    "talk": {
+      "ru": "Где здесь нам нужен компромисс, а где нет?",
+      "en": "Where do we need a compromise here, and where don't we?",
+      "he": "איפה אנחנו צריכים פה פשרה, ואיפה לא?"
+    },
+    "talkMountain": {
+      "ru": "Как мы будем с этим жить?",
+      "en": "How will we live with this?",
+      "he": "איך נחיה עם זה?"
+    },
+    "groups": []
+  },
+  "stage1": [
+    {
+      "id": "values",
+      "type": "rank",
+      "pick": 5,
+      "prompt": {
+        "ru": "Мои ценности: выбери и расставь топ-5 из 10",
+        "en": "My values: pick and rank your top 5 out of 10",
+        "he": "הערכים שלי: בחר/י ודרג/י 5 מתוך 10"
+      },
+      "options": [
+        { "id": "freedom", "label": { "ru": "свобода", "en": "freedom", "he": "חופש" } },
+        { "id": "security", "label": { "ru": "безопасность", "en": "security", "he": "ביטחון" } },
+        { "id": "family", "label": { "ru": "семья", "en": "family", "he": "משפחה" } },
+        { "id": "achievement", "label": { "ru": "достижения", "en": "achievement", "he": "הישגים" } },
+        { "id": "pleasure", "label": { "ru": "удовольствие", "en": "pleasure", "he": "הנאה" } },
+        { "id": "novelty", "label": { "ru": "новизна и приключения", "en": "novelty and adventure", "he": "חידוש והרפתקאות" } },
+        { "id": "tradition", "label": { "ru": "традиции", "en": "tradition", "he": "מסורת" } },
+        { "id": "care", "label": { "ru": "забота о других", "en": "caring for others", "he": "דאגה לאחרים" } },
+        { "id": "influence", "label": { "ru": "влияние", "en": "influence", "he": "השפעה" } },
+        { "id": "calm", "label": { "ru": "спокойствие", "en": "peace of mind", "he": "שקט נפשי" } }
+      ]
+    },
+    {
+      "id": "money-style",
+      "type": "slider",
+      "prompt": { "ru": "Деньги", "en": "Money", "he": "כסף" },
+      "left": { "ru": "тратить сейчас", "en": "spend now", "he": "להוציא עכשיו" },
+      "right": { "ru": "откладывать", "en": "save", "he": "לחסוך" }
+    },
+    {
+      "id": "money-couple",
+      "type": "choice",
+      "prompt": { "ru": "Деньги в паре", "en": "Money as a couple", "he": "כסף בזוגיות" },
+      "options": [
+        { "id": "shared", "label": { "ru": "всё общее", "en": "everything shared", "he": "הכול משותף" } },
+        { "id": "separate", "label": { "ru": "всё раздельно", "en": "everything separate", "he": "הכול נפרד" } },
+        { "id": "pot", "label": { "ru": "общий котёл + личное", "en": "shared pot + personal money", "he": "קופה משותפת + כסף אישי" } },
+        { "id": "proportional", "label": { "ru": "кто больше зарабатывает, тот больше платит", "en": "whoever earns more pays more", "he": "מי שמרוויח/ה יותר משלם/ת יותר" } }
+      ]
+    },
+    {
+      "id": "together-time",
+      "type": "slider",
+      "unit": "%",
+      "prompt": {
+        "ru": "Идеальная неделя: сколько времени вместе, а сколько порознь",
+        "en": "My ideal week: how much time together vs. apart",
+        "he": "השבוע האידיאלי שלי: כמה זמן ביחד וכמה לחוד"
+      },
+      "left": { "ru": "порознь", "en": "apart", "he": "לחוד" },
+      "right": { "ru": "вместе", "en": "together", "he": "ביחד" }
+    },
+    {
+      "id": "three-years",
+      "type": "choice",
+      "prompt": { "ru": "Где я вижу себя через 3 года", "en": "Where I see myself in 3 years", "he": "איפה אני רואה את עצמי בעוד 3 שנים" },
+      "options": [
+        { "id": "here", "label": { "ru": "здесь", "en": "here", "he": "כאן" } },
+        { "id": "abroad", "label": { "ru": "другая страна", "en": "another country", "he": "במדינה אחרת" } },
+        { "id": "anywhere", "label": { "ru": "где угодно", "en": "anywhere", "he": "בכל מקום" } },
+        { "id": "work", "label": { "ru": "там, где работа", "en": "wherever the work is", "he": "איפה שהעבודה" } },
+        { "id": "unsure", "label": { "ru": "не знаю", "en": "don't know", "he": "לא יודע/ת" } }
+      ]
+    },
+    {
+      "id": "relocate",
+      "type": "scale",
+      "min": 1,
+      "max": 7,
+      "prompt": {
+        "ru": "Готов(а) переехать ради партнёра",
+        "en": "I'm ready to move for my partner",
+        "he": "אני מוכן/ה לעבור למקום אחר בשביל בן/בת הזוג"
+      }
+    },
+    {
+      "id": "kids",
+      "type": "choice",
+      "prompt": { "ru": "Дети", "en": "Kids", "he": "ילדים" },
+      "options": [
+        { "id": "have", "label": { "ru": "уже есть", "en": "I already have kids", "he": "כבר יש לי" } },
+        { "id": "want", "label": { "ru": "хочу", "en": "I want kids", "he": "רוצה" } },
+        { "id": "dont-want", "label": { "ru": "не хочу", "en": "I don't want kids", "he": "לא רוצה" } },
+        { "id": "unsure", "label": { "ru": "не знаю", "en": "don't know", "he": "לא יודע/ת" } }
+      ],
+      "followup": {
+        "maxLength": 600,
+        "prompt": {
+          "ru": "Какую роль я вижу для себя рядом с детьми партнёра",
+          "en": "What role I see for myself around my partner's kids",
+          "he": "איזה תפקיד אני רואה לעצמי לצד הילדים של בן/בת הזוג"
+        }
+      }
+    },
+    {
+      "id": "family-influence",
+      "type": "scale",
+      "min": 1,
+      "max": 7,
+      "prompt": {
+        "ru": "Мнение семьи влияет на мои решения",
+        "en": "My family's opinion affects my decisions",
+        "he": "דעת המשפחה משפיעה על ההחלטות שלי"
+      }
+    },
+    {
+      "id": "exes",
+      "type": "choice",
+      "prompt": {
+        "ru": "Дружба с бывшими и с людьми противоположного пола",
+        "en": "Friendships with exes and with the opposite sex",
+        "he": "חברות עם אקסים ועם בני/בנות המין השני"
+      },
+      "options": [
+        { "id": "fine", "label": { "ru": "нормально", "en": "fine", "he": "בסדר גמור" } },
+        { "id": "caveats", "label": { "ru": "с оговорками", "en": "with caveats", "he": "עם הסתייגויות" } },
+        { "id": "not-ok", "label": { "ru": "не ок", "en": "not okay", "he": "לא בסדר" } }
+      ]
+    },
+    {
+      "id": "project-vs-trip",
+      "type": "choice",
+      "prompt": {
+        "ru": "Важный проект совпал с давно запланированной поездкой к партнёру",
+        "en": "A big project clashes with a long-planned trip to see my partner",
+        "he": "פרויקט חשוב מתנגש עם נסיעה שתוכננה מזמן אל בן/בת הזוג"
+      },
+      "options": [
+        { "id": "go", "label": { "ru": "еду", "en": "I go", "he": "נוסע/ת" } },
+        { "id": "stay", "label": { "ru": "остаюсь", "en": "I stay", "he": "נשאר/ת" } },
+        { "id": "compromise", "label": { "ru": "ищу компромисс", "en": "I look for a compromise", "he": "מחפש/ת פשרה" } },
+        { "id": "depends", "label": { "ru": "зависит", "en": "it depends", "he": "תלוי" } }
+      ]
+    },
+    {
+      "id": "religion",
+      "type": "scale",
+      "min": 1,
+      "max": 7,
+      "prompt": {
+        "ru": "Насколько для меня важны религия и традиции",
+        "en": "How important religion and traditions are to me",
+        "he": "כמה חשובות לי דת ומסורת"
+      }
+    },
+    {
+      "id": "chores-hate",
+      "type": "multi",
+      "prompt": { "ru": "Что я ненавижу делать по дому", "en": "Chores I hate", "he": "מטלות בית שאני שונא/ת" },
+      "options": [
+        { "id": "cooking", "label": { "ru": "готовить", "en": "cooking", "he": "לבשל" } },
+        { "id": "dishes", "label": { "ru": "мыть посуду", "en": "dishes", "he": "לשטוף כלים" } },
+        { "id": "laundry", "label": { "ru": "стирка", "en": "laundry", "he": "כביסה" } },
+        { "id": "cleaning", "label": { "ru": "уборка", "en": "cleaning", "he": "ניקיון" } },
+        { "id": "groceries", "label": { "ru": "ходить за продуктами", "en": "grocery runs", "he": "קניות בסופר" } },
+        { "id": "trash", "label": { "ru": "выносить мусор", "en": "taking out the trash", "he": "להוציא את הזבל" } },
+        { "id": "ironing", "label": { "ru": "гладить", "en": "ironing", "he": "לגהץ" } },
+        { "id": "bathroom", "label": { "ru": "мыть ванную", "en": "cleaning the bathroom", "he": "לנקות את השירותים" } },
+        { "id": "paperwork", "label": { "ru": "счета и бумаги", "en": "bills and paperwork", "he": "חשבונות וניירת" } },
+        { "id": "repairs", "label": { "ru": "мелкий ремонт", "en": "small repairs", "he": "תיקונים קטנים" } },
+        { "id": "none", "exclusive": true, "label": { "ru": "ничего, мне всё ок", "en": "nothing, I'm fine with all of it", "he": "שום דבר, הכול בסדר" } }
+      ]
+    }
+  ],
+  "pool": [
+    { "id": "forever-topic", "text": { "ru": "Какое различие между нами, по-твоему, станет нашей «вечной темой»?", "en": "Which difference between us do you think will become our \"forever topic\"?", "he": "איזה הבדל בינינו לדעתך יהפוך ל\"נושא הנצחי\" שלנו?" } },
+    { "id": "wont-tolerate", "text": { "ru": "Что ты точно не готов(а) терпеть в отношениях?", "en": "What are you definitely not willing to put up with in a relationship?", "he": "מה את/ה בטוח לא מוכן/ה לסבול בקשר?" } },
+    { "id": "move-for", "text": { "ru": "Ради чего ты бы переехал(а) в другую страну, а ради чего — никогда?", "en": "What would you move to another country for — and what never?", "he": "בשביל מה היית עובר/ת למדינה אחרת, ובשביל מה אף פעם לא?" } },
+    { "id": "family-money", "text": { "ru": "Как в твоей семье спорили о деньгах?", "en": "How did your family argue about money?", "he": "איך במשפחה שלך התווכחו על כסף?" } },
+    { "id": "cheating", "text": { "ru": "Что для тебя измена? Где проходит граница?", "en": "What counts as cheating for you? Where's the line?", "he": "מה נחשב בגידה בעיניך? איפה עובר הגבול?" } },
+    { "id": "never-again", "text": { "ru": "Какой компромисс из прошлых отношений ты больше не повторишь?", "en": "Which compromise from a past relationship will you never make again?", "he": "איזו פשרה מקשרים קודמים לא תחזור/י עליה שוב?" } },
+    { "id": "sacrifice", "text": { "ru": "Чем ты готов(а) пожертвовать ради отношений, а чем — нет?", "en": "What are you willing to give up for a relationship — and what not?", "he": "על מה את/ה מוכן/ה לוותר בשביל קשר, ועל מה לא?" } },
+    { "id": "tuesday", "text": { "ru": "Как выглядит наш обычный вторник через два года?", "en": "What does an ordinary Tuesday look like for us two years from now?", "he": "איך נראה יום שלישי רגיל שלנו בעוד שנתיים?" } },
+    { "id": "fear-losing", "text": { "ru": "Чего ты боишься потерять, если у нас станет серьёзно?", "en": "What are you afraid of losing if this gets serious?", "he": "מה את/ה חושש/ת לאבד אם בינינו זה יהפוך לרציני?" } },
+    { "id": "kids-place", "text": { "ru": "Если у кого-то из нас есть дети — как ты видишь своё место в этой части жизни?", "en": "If one of us has kids — how do you see your place in that part of life?", "he": "אם למישהו מאיתנו יש ילדים — איך את/ה רואה את המקום שלך בחלק הזה של החיים?" } }
+  ]
+}

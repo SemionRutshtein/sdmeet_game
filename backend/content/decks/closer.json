@@ -1,0 +1,128 @@
+{
+  "id": "closer",
+  "order": 4,
+  "adult": true,
+  "defaultSelected": false,
+  "icon": "🕯️",
+  "title": { "ru": "Ближе (18+)", "en": "Closer (18+)", "he": "קרובים יותר (18+)" },
+  "tagline": {
+    "ru": "Про чувства и потребности.",
+    "en": "About feelings and needs.",
+    "he": "על רגשות וצרכים."
+  },
+  "goal": {
+    "ru": "Включается, только если оба этого хотят. Вопросы под замком открываются, только когда оба нажали «показать».",
+    "en": "Only on if you both want it. Locked questions open only when both of you press \"show\".",
+    "he": "פעיל רק אם שניכם רוצים. שאלות נעולות נפתחות רק כששניכם לוחצים \"הצג\"."
+  },
+  "reveal": {
+    "name": { "ru": "Совпадения", "en": "Matches", "he": "התאמות" },
+    "talk": {
+      "ru": "Что из этого хочется обсудить подробнее?",
+      "en": "What here would you like to talk about more?",
+      "he": "על מה מכל זה בא לך לדבר יותר?"
+    },
+    "groups": []
+  },
+  "stage1": [
+    {
+      "id": "sex-talk-easy",
+      "type": "scale",
+      "min": 1,
+      "max": 7,
+      "phase": 1,
+      "prompt": { "ru": "Мне легко говорить о сексе с партнёром", "en": "It's easy for me to talk about sex with my partner", "he": "קל לי לדבר על סקס עם בן/בת הזוג" }
+    },
+    {
+      "id": "sex-importance",
+      "type": "scale",
+      "min": 1,
+      "max": 7,
+      "phase": 1,
+      "prompt": { "ru": "Насколько секс важен для меня в отношениях", "en": "How important sex is to me in a relationship", "he": "כמה סקס חשוב לי בקשר" }
+    },
+    {
+      "id": "intimacy-beyond",
+      "type": "rank",
+      "phase": 1,
+      "prompt": { "ru": "Близость вне секса для меня — это…", "en": "Intimacy outside of sex, for me, is…", "he": "אינטימיות מחוץ לסקס, בשבילי, זה…" },
+      "options": [
+        { "id": "night-talks", "label": { "ru": "ночные разговоры", "en": "late-night talks", "he": "שיחות לילה" } },
+        { "id": "touch", "label": { "ru": "прикосновения", "en": "touch", "he": "מגע" } },
+        { "id": "humor", "label": { "ru": "юмор", "en": "humor", "he": "הומור" } },
+        { "id": "quiet", "label": { "ru": "молчать рядом", "en": "being quiet together", "he": "לשתוק ביחד" } },
+        { "id": "care", "label": { "ru": "забота", "en": "care", "he": "אכפתיות" } },
+        { "id": "doing", "label": { "ru": "делать что-то вместе", "en": "doing things together", "he": "לעשות דברים ביחד" } }
+      ]
+    },
+    {
+      "id": "turn-on",
+      "type": "multi",
+      "phase": 1,
+      "prompt": { "ru": "Меня больше заводит…", "en": "What turns me on more…", "he": "מה מדליק אותי יותר…" },
+      "options": [
+        { "id": "anticipation", "label": { "ru": "ожидание", "en": "anticipation", "he": "ציפייה" } },
+        { "id": "spontaneity", "label": { "ru": "спонтанность", "en": "spontaneity", "he": "ספונטניות" } },
+        { "id": "tenderness", "label": { "ru": "нежность", "en": "tenderness", "he": "רוך" } },
+        { "id": "boldness", "label": { "ru": "напор", "en": "boldness", "he": "נועזות" } },
+        { "id": "play", "label": { "ru": "игра", "en": "play", "he": "משחק" } },
+        { "id": "words", "label": { "ru": "слова", "en": "words", "he": "מילים" } }
+      ]
+    },
+    {
+      "id": "distance-miss",
+      "type": "choice",
+      "phase": 1,
+      "prompt": { "ru": "На расстоянии мне больше всего не хватает…", "en": "When we're apart, what I miss most is…", "he": "כשאנחנו רחוקים, הכי חסר לי…" },
+      "options": [
+        { "id": "voice", "label": { "ru": "голоса", "en": "your voice", "he": "הקול שלך" } },
+        { "id": "touch", "label": { "ru": "прикосновений", "en": "touch", "he": "מגע" } },
+        { "id": "sleep", "label": { "ru": "засыпать рядом", "en": "falling asleep together", "he": "להירדם ביחד" } },
+        { "id": "spontaneity", "label": { "ru": "спонтанности", "en": "spontaneity", "he": "ספונטניות" } },
+        { "id": "other", "custom": true, "label": { "ru": "свой вариант", "en": "something else", "he": "משהו אחר" } }
+      ]
+    },
+    {
+      "id": "feel-desired",
+      "type": "text",
+      "voice": true,
+      "maxLength": 1000,
+      "lock": true,
+      "phase": 3,
+      "prompt": { "ru": "Я чувствую себя желанным(ой), когда…", "en": "I feel desired when…", "he": "אני מרגיש/ה נחשק/ת כש…" }
+    },
+    {
+      "id": "saying-no",
+      "type": "text",
+      "voice": true,
+      "maxLength": 1000,
+      "lock": true,
+      "phase": 3,
+      "prompt": {
+        "ru": "Как мне легче сказать «нет» и как я хочу, чтобы «нет» говорили мне",
+        "en": "How it's easiest for me to say \"no\" — and how I want \"no\" said to me",
+        "he": "איך הכי קל לי להגיד \"לא\", ואיך אני רוצה שיגידו לי \"לא\""
+      }
+    },
+    {
+      "id": "wishlist",
+      "type": "wishlist",
+      "phase": 2,
+      "prompt": { "ru": "Список желаний", "en": "Wishlist", "he": "רשימת משאלות" },
+      "hint": {
+        "ru": "Для каждого пункта: да · может быть · нет. Партнёр увидит только то, где вы оба сказали «да» или «может быть». Твоё «нет» он(а) не увидит никогда.",
+        "en": "For each item: yes · maybe · no. Your partner only sees items where you both said yes or maybe. Your \"no\" is never shown.",
+        "he": "לכל פריט: כן · אולי · לא. בן/בת הזוג יראו רק פריטים שבהם שניכם אמרתם כן או אולי. ה\"לא\" שלך לעולם לא יוצג."
+      }
+    }
+  ],
+  "pool": [
+    { "id": "shy-to-suggest", "lock": true, "text": { "ru": "Что ты хотел(а) попробовать, но стеснялся(ась) предложить?", "en": "What have you wanted to try but felt shy to suggest?", "he": "מה רצית לנסות אבל התביישת להציע?" } },
+    { "id": "most-attractive", "lock": true, "text": { "ru": "Когда ты чувствуешь себя самым(ой) привлекательным(ой)?", "en": "When do you feel most attractive?", "he": "מתי את/ה מרגיש/ה הכי מושך/ת?" } },
+    { "id": "rarely-ask", "lock": true, "text": { "ru": "Что тебе нравится, но ты редко об этом просишь?", "en": "What do you like but rarely ask for?", "he": "מה את/ה אוהב/ת אבל כמעט לא מבקש/ת?" } },
+    { "id": "too-much", "lock": true, "text": { "ru": "Что для тебя «слишком»?", "en": "What's \"too much\" for you?", "he": "מה זה \"יותר מדי\" בשבילך?" } },
+    { "id": "replay-moment", "lock": true, "text": { "ru": "Какой момент между нами ты прокручиваешь в голове?", "en": "Which moment between us do you replay in your head?", "he": "איזה רגע בינינו את/ה משחזר/ת בראש?" } },
+    { "id": "how-you-know", "lock": true, "text": { "ru": "Как ты понимаешь, что мне хорошо?", "en": "How can you tell that I'm enjoying it?", "he": "איך את/ה יודע/ת שטוב לי?" } },
+    { "id": "hard-to-say", "lock": true, "text": { "ru": "Что тебе сложно сказать вслух в постели?", "en": "What's hard for you to say out loud in bed?", "he": "מה קשה לך להגיד בקול במיטה?" } }
+  ]
+}

@@ -2,38 +2,53 @@ try { require('dotenv').config(); } catch (_) {}
 const express = require('express');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
-const cors = require('cors');
 const path = require('path');
 
-const { setupGameSocket } = require('./socket/gameSocket');
-const roomRouter = require('./routes/room');
+const config = require('./config');
+const { content } = require('./content');
+const { setupSocket } = require('./socket');
+const { schedulePurge } = require('./purge');
+const apiRouter = require('./routes/api');
 
-const app = express();
-const httpServer = createServer(app);
+const PUBLIC_DIR = path.join(__dirname, '../public');
 
-const io = new Server(httpServer, {
-  cors: { origin: '*' },
-  connectionStateRecovery: { maxDisconnectionDuration: 2 * 60 * 1000 }
-});
+function createApp() {
+  // Fail fast on broken content or a missing key instead of at the first request.
+  content();
+  require('./crypto').encryptJson('boot-check', true);
 
-app.use(cors());
-app.use(express.json());
+  const app = express();
+  app.set('trust proxy', 1);
+  app.disable('x-powered-by');
+  app.use((req, res, next) => {
+    res.set('X-Content-Type-Options', 'nosniff');
+    res.set('Referrer-Policy', 'no-referrer');
+    res.set('X-Frame-Options', 'DENY');
+    res.set('Permissions-Policy', 'microphone=(self), camera=()');
+    next();
+  });
+  app.use(express.json({ limit: '64kb' }));
 
-// Serve frontend — works both locally (../../frontend) and in Railway (../public)
-const frontendPath = path.join(__dirname, '../public');
-app.use(express.static(frontendPath));
+  app.get('/healthz', (req, res) => res.json({ ok: true }));
+  app.use('/api', apiRouter);
+  app.use(express.static(PUBLIC_DIR, { index: 'index.html' }));
+  // SPA: every other GET gets the shell
+  app.get('*', (req, res) => res.sendFile(path.join(PUBLIC_DIR, 'index.html')));
 
-app.use('/api', roomRouter);
+  const httpServer = createServer(app);
+  const io = new Server(httpServer, {
+    connectionStateRecovery: { maxDisconnectionDuration: 2 * 60 * 1000 }
+  });
+  setupSocket(io);
+  return { app, httpServer, io };
+}
 
-app.get('*', (req, res) => {
-  if (!req.path.startsWith('/api')) {
-    res.sendFile(path.join(frontendPath, 'index.html'));
-  }
-});
+if (require.main === module) {
+  const { httpServer } = createApp();
+  schedulePurge();
+  httpServer.listen(config.port, () => {
+    console.log(`sdmeet 2.0 running on port ${config.port}`);
+  });
+}
 
-setupGameSocket(io);
-
-const PORT = process.env.PORT || 3000;
-httpServer.listen(PORT, () => {
-  console.log(`sdmeet game running on port ${PORT}`);
-});
+module.exports = { createApp };
