@@ -91,6 +91,7 @@ const en = {
   climate: { storm: 'In a storm I need', asIs: 'as it is', asThought: 'as {name} thought', asThoughtByYou: 'as you thought' },
   scene: { feel: 'feelings', do: 'action' },
   status: { discussed: 'Discussed', later: 'Come back later', rule: 'Make it our rule' },
+  statusBadge: { discussed: 'discussed', later: 'later', rule: 'our rule' },
   terrain: { valley: 'Valley', hill: 'Hill', mountain: 'Mountain' },
   concl: {
     passed: '{name} passed.',
@@ -257,6 +258,7 @@ const ru = {
   climate: { storm: 'В грозу мне нужно', asIs: 'как есть', asThought: 'как думал(а): {name}', asThoughtByYou: 'как думал(а) ты' },
   scene: { feel: 'чувства', do: 'действие' },
   status: { discussed: 'Обсудили', later: 'Вернуться позже', rule: 'Сделать нашим правилом' },
+  statusBadge: { discussed: 'обсудили', later: 'позже', rule: 'наше правило' },
   terrain: { valley: 'Долина', hill: 'Холм', mountain: 'Гора' },
   concl: {
     passed: '{name}: пас.',
@@ -423,6 +425,7 @@ const he = {
   climate: { storm: 'בסערה אני צריך/ה', asIs: 'כמו שזה', asThought: 'כמו ש{name} חשב/ה', asThoughtByYou: 'כמו שחשבת' },
   scene: { feel: 'רגשות', do: 'פעולה' },
   status: { discussed: 'דיברנו', later: 'לחזור לזה', rule: 'להפוך לכלל שלנו' },
+  statusBadge: { discussed: 'דיברנו', later: 'אחר כך', rule: 'הכלל שלנו' },
   terrain: { valley: 'עמק', hill: 'גבעה', mountain: 'הר' },
   concl: {
     passed: '{name}: דילוג.',
@@ -558,5 +561,6 @@ export function onLangChange(fn) {
 export function formatDate(d) {
   if (!d) return '';
   const locale = { en: 'en-GB', ru: 'ru-RU', he: 'he-IL' }[lang];
-  return new Date(d).toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' });
+  // ru adds a trailing "г."; drop the dot so templates can end the sentence
+  return new Date(d).toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' }).replace(/\.$/, '');
 }

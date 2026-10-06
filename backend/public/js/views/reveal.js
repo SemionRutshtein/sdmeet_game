@@ -52,7 +52,7 @@ export function boardView(ctx) {
         h('div', { class: 'tile-badges' },
           c.lock ? h('span', { class: 'pill gold' }, c.lockSeats.length >= 2 ? '🔓' : '🔒') : null,
           terrainPill(c.terrain),
-          c.status ? h('span', { class: 'pill gold' }, STATUS_ICON[c.status], ' ', t(`status.${c.status}`)) : null),
+          c.status ? h('span', { class: 'pill gold' }, STATUS_ICON[c.status], ' ', t(`statusBadge.${c.status}`)) : null),
         h('div', { class: 'tile-title' }, cardTitle(c, state)));
     }
     const icon = c.deck ? deckOf(c.deck).icon : '✍️';

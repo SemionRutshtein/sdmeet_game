@@ -82,6 +82,17 @@ BASE_URL=http://localhost:3000 npm run test:e2e
 # E2E_WAIT_CAPSULE=1 also waits ~3 minutes for the capsule to open and runs the retake.
 ```
 
+### Quick check with curl
+
+`scripts/smoke.sh` plays a whole game through the API with curl + jq: create, join, all three stages, reveal (turns, locks), thread, rule, summary, export consent, capsule sealing, delete. It prints a ✓ per check and stops at the first failure.
+
+```bash
+./scripts/smoke.sh http://localhost:3000
+./scripts/smoke.sh https://your-app.up.railway.app      # after deploy
+DECKS='["no-gloss","perpetual"]' ./scripts/smoke.sh URL  # fewer decks
+KEEP=1 ./scripts/smoke.sh URL                            # keep the room and print both tokens
+```
+
 ## Environment variables
 
 | Variable | Default | Description |
