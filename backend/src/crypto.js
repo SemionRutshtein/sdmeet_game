@@ -17,7 +17,8 @@ function loadMasterKey() {
     if (key.length !== 32) throw new Error('DATA_KEY must be 32 bytes, base64-encoded');
     return key;
   }
-  if (process.env.NODE_ENV === 'production') {
+  // Railway may not set NODE_ENV, so a Railway environment counts as production too.
+  if (process.env.NODE_ENV === 'production' || process.env.RAILWAY_ENVIRONMENT) {
     throw new Error('DATA_KEY is required in production (32 random bytes, base64). Generate: openssl rand -base64 32');
   }
   console.warn('[crypto] DATA_KEY not set: using an insecure development key');
