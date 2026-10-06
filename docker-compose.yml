@@ -19,7 +19,9 @@ services:
     environment:
       DATABASE_URL: postgresql://sdmeet:sdmeet@db:5432/sdmeet
       PORT: 3000
-      TOTAL_TURNS: 20
+      # dev-only key; set your own for anything real (openssl rand -base64 32)
+      DATA_KEY: AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=
+      ROOM_TTL_DAYS: 30
     ports:
       - "3000:3000"
     depends_on:

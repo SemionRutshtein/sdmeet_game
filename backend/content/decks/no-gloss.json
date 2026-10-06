@@ -1,0 +1,178 @@
+{
+  "id": "no-gloss",
+  "order": 1,
+  "adult": false,
+  "defaultSelected": true,
+  "icon": "🌦️",
+  "title": { "ru": "Без глянца", "en": "No Gloss", "he": "בלי פילטר" },
+  "tagline": {
+    "ru": "Какой ты, когда плохо.",
+    "en": "Who you are on a bad day.",
+    "he": "מי את/ה ביום רע."
+  },
+  "goal": {
+    "ru": "Чтобы негативная эмоция стала частью карты, а не сбоем в образе.",
+    "en": "So hard emotions become part of the map, not a glitch in the picture.",
+    "he": "כדי שרגשות קשים יהיו חלק מהמפה, ולא תקלה בתמונה."
+  },
+  "reveal": {
+    "name": { "ru": "Прогноз погоды", "en": "Weather Forecast", "he": "תחזית מזג האוויר" },
+    "talk": {
+      "ru": "Как мне лучше быть рядом с тобой в такой момент?",
+      "en": "How can I best be there for you in a moment like this?",
+      "he": "איך אני יכול/ה להיות שם בשבילך הכי טוב ברגע כזה?"
+    },
+    "groups": [
+      {
+        "id": "climate",
+        "view": "climate",
+        "questions": ["weather", "bad-day-needs", "ok-seen", "anger-scares", "self-reliant"],
+        "title": { "ru": "Климат", "en": "Climate", "he": "אקלים" },
+        "talk": {
+          "ru": "Что в моём прогнозе тебя удивило?",
+          "en": "What in my forecast surprised you?",
+          "he": "מה בתחזית שלי הפתיע אותך?"
+        }
+      }
+    ]
+  },
+  "stage1": [
+    {
+      "id": "anger",
+      "type": "choice",
+      "predictable": true,
+      "prompt": { "ru": "Когда я злюсь, я обычно…", "en": "When I'm angry, I usually…", "he": "כשאני כועס/ת, בדרך כלל אני…" },
+      "options": [
+        { "id": "say", "label": { "ru": "говорю сразу", "en": "say it right away", "he": "אומר/ת את זה מיד" } },
+        { "id": "boil", "label": { "ru": "молчу, но внутри кипит", "en": "go quiet, but boil inside", "he": "שותק/ת, אבל רותח/ת מבפנים" } },
+        { "id": "leave", "label": { "ru": "ухожу", "en": "walk away", "he": "הולך/ת" } },
+        { "id": "snark", "label": { "ru": "язвлю", "en": "get sarcastic", "he": "עוקץ/ת" } },
+        { "id": "cry", "label": { "ru": "плачу", "en": "cry", "he": "בוכה" } },
+        { "id": "other", "custom": true, "label": { "ru": "свой вариант", "en": "something else", "he": "משהו אחר" } }
+      ]
+    },
+    {
+      "id": "bad-day-needs",
+      "type": "rank",
+      "predictable": true,
+      "prompt": {
+        "ru": "Когда мне плохо, в первые 10 минут мне нужно…",
+        "en": "When I'm feeling bad, in the first 10 minutes I need…",
+        "he": "כשרע לי, ב־10 הדקות הראשונות אני צריך/ה…"
+      },
+      "options": [
+        { "id": "alone", "label": { "ru": "побыть одному", "en": "some time on my own", "he": "להיות לבד" } },
+        { "id": "hug", "label": { "ru": "обнять", "en": "a hug", "he": "חיבוק" } },
+        { "id": "listen", "label": { "ru": "выслушать без советов", "en": "to be heard, no advice", "he": "שיקשיבו לי, בלי עצות" } },
+        { "id": "advice", "label": { "ru": "дать совет", "en": "advice", "he": "עצה" } },
+        { "id": "distract", "label": { "ru": "отвлечь", "en": "a distraction", "he": "הסחת דעת" } },
+        { "id": "hands-off", "label": { "ru": "не трогать", "en": "to not be bothered", "he": "שלא יציקו לי" } }
+      ]
+    },
+    {
+      "id": "ok-seen",
+      "type": "scale",
+      "min": 1,
+      "max": 7,
+      "predictable": true,
+      "prompt": {
+        "ru": "Мне нормально, когда партнёр видит меня в плохом настроении",
+        "en": "I'm okay with my partner seeing me in a bad mood",
+        "he": "זה בסדר מבחינתי שבן/בת הזוג רואה אותי במצב רוח רע"
+      }
+    },
+    {
+      "id": "anger-scares",
+      "type": "scale",
+      "min": 1,
+      "max": 7,
+      "predictable": true,
+      "prompt": { "ru": "Чужая злость меня пугает", "en": "Other people's anger scares me", "he": "כעס של אחרים מפחיד אותי" }
+    },
+    {
+      "id": "family-anger",
+      "type": "choice",
+      "predictable": true,
+      "prompt": {
+        "ru": "В моей семье, когда кто-то злился, все…",
+        "en": "In my family, when someone got angry, everyone…",
+        "he": "במשפחה שלי, כשמישהו כעס, כולם…"
+      },
+      "options": [
+        { "id": "yelled", "label": { "ru": "кричали", "en": "yelled", "he": "צעקו" } },
+        { "id": "quiet", "label": { "ru": "замолкали", "en": "went quiet", "he": "השתתקו" } },
+        { "id": "pretend", "label": { "ru": "делали вид, что всё ок", "en": "pretended everything was fine", "he": "העמידו פנים שהכול בסדר" } },
+        { "id": "talk", "label": { "ru": "садились обсуждать", "en": "sat down to talk it through", "he": "ישבו לדבר על זה" } },
+        { "id": "rooms", "label": { "ru": "расходились по комнатам", "en": "went off to their rooms", "he": "התפזרו לחדרים" } }
+      ]
+    },
+    {
+      "id": "hardest-emotion",
+      "type": "choice",
+      "predictable": true,
+      "prompt": {
+        "ru": "Какую эмоцию мне сложнее всего показать?",
+        "en": "Which emotion is hardest for me to show?",
+        "he": "איזה רגש הכי קשה לי להראות?"
+      },
+      "options": [
+        { "id": "anger", "label": { "ru": "злость", "en": "anger", "he": "כעס" } },
+        { "id": "sadness", "label": { "ru": "грусть", "en": "sadness", "he": "עצב" } },
+        { "id": "fear", "label": { "ru": "страх", "en": "fear", "he": "פחד" } },
+        { "id": "jealousy", "label": { "ru": "ревность", "en": "jealousy", "he": "קנאה בזוגיות" } },
+        { "id": "envy", "label": { "ru": "зависть", "en": "envy", "he": "קנאה במה שיש לאחרים" } },
+        { "id": "helplessness", "label": { "ru": "беспомощность", "en": "helplessness", "he": "חוסר אונים" } },
+        { "id": "joy", "label": { "ru": "радость", "en": "joy", "he": "שמחה" } }
+      ]
+    },
+    {
+      "id": "self-reliant",
+      "type": "scale",
+      "min": 1,
+      "max": 7,
+      "predictable": true,
+      "prompt": { "ru": "Я лучше справляюсь сам(а)", "en": "I cope better on my own", "he": "אני מסתדר/ת טוב יותר לבד" }
+    },
+    {
+      "id": "first-impression",
+      "type": "text",
+      "voice": true,
+      "maxLength": 1000,
+      "predictable": false,
+      "prompt": {
+        "ru": "Что обо мне думают по первому впечатлению — и что из этого неправда?",
+        "en": "What do people think of me at first — and which part of that isn't true?",
+        "he": "מה חושבים עליי ברושם ראשוני — ומה מזה לא נכון?"
+      }
+    },
+    {
+      "id": "weather",
+      "type": "weather",
+      "predictable": true,
+      "maxLength": 120,
+      "prompt": { "ru": "Моя «плохая погода» выглядит так…", "en": "My \"bad weather\" looks like…", "he": "מזג האוויר הרע שלי נראה כך…" },
+      "options": [
+        { "id": "cloudy", "icon": "☁️", "label": { "ru": "пасмурно", "en": "overcast", "he": "מעונן" } },
+        { "id": "fog", "icon": "🌫️", "label": { "ru": "туман", "en": "fog", "he": "ערפל" } },
+        { "id": "drizzle", "icon": "🌦️", "label": { "ru": "морось", "en": "drizzle", "he": "טפטוף" } },
+        { "id": "rain", "icon": "🌧️", "label": { "ru": "ливень", "en": "downpour", "he": "גשם שוטף" } },
+        { "id": "storm", "icon": "⛈️", "label": { "ru": "гроза", "en": "thunderstorm", "he": "סופת רעמים" } },
+        { "id": "wind", "icon": "🌬️", "label": { "ru": "штормовой ветер", "en": "gale", "he": "רוח סערה" } },
+        { "id": "snow", "icon": "❄️", "label": { "ru": "заморозки", "en": "frost", "he": "כפור" } },
+        { "id": "heat", "icon": "🔥", "label": { "ru": "жара", "en": "heatwave", "he": "שרב" } }
+      ]
+    }
+  ],
+  "pool": [
+    { "id": "hidden-trait", "text": { "ru": "Какую свою черту ты обычно прячешь в начале отношений?", "en": "Which trait of yours do you usually hide at the start of a relationship?", "he": "איזו תכונה שלך את/ה בדרך כלל מסתיר/ה בתחילת קשר?" } },
+    { "id": "silent-annoyed", "text": { "ru": "Что ты делаешь, когда я тебя раздражаю, но ты молчишь?", "en": "What do you do when I annoy you but you stay quiet?", "he": "מה את/ה עושה כשאני מעצבן/ת אותך אבל את/ה שותק/ת?" } },
+    { "id": "need-to-hear", "text": { "ru": "Что тебе нужно услышать от меня в плохой день — дословно?", "en": "What do you need to hear from me on a bad day — word for word?", "he": "מה את/ה צריך/ה לשמוע ממני ביום רע — מילה במילה?" } },
+    { "id": "hardest-to-accept", "text": { "ru": "Какую мою эмоцию тебе было бы сложнее всего принять?", "en": "Which of my emotions would be hardest for you to accept?", "he": "איזה רגש שלי היה הכי קשה לך לקבל?" } },
+    { "id": "unloved-mood", "text": { "ru": "Тебя когда-нибудь «переставали любить» за плохое настроение? Что тогда было?", "en": "Has anyone ever \"stopped loving\" you over a bad mood? What happened?", "he": "קרה פעם ש\"הפסיקו לאהוב\" אותך בגלל מצב רוח רע? מה קרה אז?" } },
+    { "id": "saw-worst", "text": { "ru": "Кто видел тебя в худшем состоянии и остался рядом?", "en": "Who has seen you at your worst and stayed?", "he": "מי ראה אותך במצב הכי גרוע שלך ונשאר?" } },
+    { "id": "last-cried", "text": { "ru": "Когда ты последний раз плакал(а) и из-за чего?", "en": "When did you last cry, and why?", "he": "מתי בכית בפעם האחרונה, ועל מה?" } },
+    { "id": "heavy-side", "text": { "ru": "Что ты считаешь своей «тяжёлой» стороной и как с ней лучше обращаться?", "en": "What do you see as your \"heavy\" side, and how is it best handled?", "he": "מה לדעתך הצד ה\"כבד\" שלך, ואיך הכי נכון להתנהל איתו?" } },
+    { "id": "ashamed", "text": { "ru": "О чём тебе стыдно говорить даже с близкими?", "en": "What are you ashamed to talk about, even with people close to you?", "he": "על מה את/ה מתבייש/ת לדבר, אפילו עם אנשים קרובים?" } },
+    { "id": "one-ask", "text": { "ru": "Если в плохом состоянии можно попросить меня ровно об одном — о чём?", "en": "If on a bad day you could ask me for exactly one thing — what would it be?", "he": "אם ביום רע היית יכול/ה לבקש ממני דבר אחד בדיוק — מה זה היה?" } }
+  ]
+}

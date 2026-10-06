@@ -1,25 +1,27 @@
 {
   "name": "sdmeet-game-backend",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
-    "db:push": "prisma db push",
-    "db:seed": "node prisma/seed.js",
+    "migrate": "node prisma/migrate.js",
     "db:generate": "prisma generate",
-    "db:migrate": "prisma migrate deploy"
+    "test": "node --test --test-concurrency=1 'test/*.test.js'",
+    "test:e2e": "node test/e2e/browser.mjs"
   },
   "dependencies": {
     "@prisma/client": "^5.14.0",
-    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.0",
-"socket.io": "^4.7.5",
-    "uuid": "^9.0.1"
+    "socket.io": "^4.7.5"
   },
   "devDependencies": {
     "nodemon": "^3.1.4",
+    "playwright-core": "^1.63.0",
     "prisma": "^5.14.0"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }

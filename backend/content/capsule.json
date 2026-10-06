@@ -1,0 +1,10 @@
+{
+  "durations": [3, 6, 12],
+  "prompts": [
+    { "id": "admire", "text": { "ru": "Что меня в тебе сейчас восхищает", "en": "What I admire about you right now", "he": "מה מעורר בי הערצה אצלך עכשיו" } },
+    { "id": "fear", "text": { "ru": "Чего я боюсь в нас", "en": "What I'm afraid of in us", "he": "ממה אני חושש/ת בנו" } },
+    { "id": "half-year", "text": { "ru": "Где мы, по-моему, будем через полгода", "en": "Where I think we'll be in six months", "he": "איפה לדעתי נהיה בעוד חצי שנה" } },
+    { "id": "remember", "text": { "ru": "Одна вещь, которую я хочу, чтобы ты помнил(а)", "en": "One thing I want you to remember", "he": "דבר אחד שאני רוצה שתזכור/י" } },
+    { "id": "change-first", "text": { "ru": "Что, по-моему, изменится первым", "en": "What I think will change first", "he": "מה לדעתי ישתנה ראשון" } }
+  ]
+}

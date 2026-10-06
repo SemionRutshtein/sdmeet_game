@@ -1,158 +1,129 @@
-# SDMeet — Date Game
+# SDMeet 2.0
 
-A real-time two-player intimacy game built for dates. Based on Altman & Taylor's social penetration theory — questions escalate from light icebreakers to deep vulnerability across 20 turns.
+An online game for two. Each of you draws a map of yourself and guesses your partner's. Then you open it together and see where you matched and where you missed. It's not a compatibility test, it's a reason to talk.
 
-**Live demo:** [sdmeet-app-production.up.railway.app](https://sdmeet-app-production.up.railway.app)
+Built on Love Maps and meta-emotion (Gottman), the 36 questions (Aron, 1997), perpetual problems (Gottman, Wile) and Joel et al., PNAS 2020. There's deliberately no compatibility percentage, no "love language" types and no psychological labels on screen.
 
----
-
-## How it works
-
-1. **Player 1** opens the app, enters their name → clicks **Create Game**
-2. Shares the link with their date
-3. **Player 2** opens the link, enters their name → game starts instantly
-4. Active player gets a question → answers verbally → clicks **"Ответил(а)"**
-5. Partner confirms with **"Засчитано"** → turn passes
-6. Skip a question → get a **Task** (physical or creative challenge) instead
-7. 20 turns total, three levels:
-   - **L1 (turns 1–6):** Light / Funny
-   - **L2 (turns 7–14):** Personal / Past
-   - **L3 (turns 15–20):** Intimate / Here and now
-
-**120 questions · 59 tasks** — seeded automatically on first deploy.
-
-Both players see state changes instantly via WebSocket. Closing and reopening the tab resumes the exact game state via `localStorage` session restore.
+- **Design (source of truth, Russian):** [`docs/GAME_DESIGN.ru.md`](docs/GAME_DESIGN.ru.md)
+- **Implementation notes and decisions:** [`docs/IMPLEMENTATION.md`](docs/IMPLEMENTATION.md)
+- **UI languages:** English (default), Russian, Hebrew (RTL). Switch at the top right.
 
 ---
+
+## How a game goes
+
+A room has two players and 1–4 decks (default: *No Gloss* + *69%*).
+
+| Stage | Mode | What happens |
+|---|---|---|
+| 1. About me | async | Answer stage-1 questions of the chosen decks. Anything can be passed. |
+| 2. Questions for your partner | async | Pick 5–7 questions from the decks' pools, or write your own. Hidden until stage 3. |
+| 3. Answer and predict | async | Answer your partner's picks, and guess how they answered stage 1. Your first guess freezes their stage-1 answers. |
+| 4. Reveal | together | A board of face-down cards. Take turns opening them. Each card has both answers, the guesses (hit/miss), a 1–2 line conclusion, a question to talk about, a thread with text and voice notes, and actions: discussed / come back later / make it our rule. |
+
+After that comes **Our map** (accuracy, climate, relief, rules, share image, PDF export) and the **time capsule**, which opens in 3, 6 or 12 months and offers a retake for "then / now".
+
+| Deck | Reveal | Notes |
+|---|---|---|
+| No Gloss | Weather Forecast | All predictable. A "climate" card per person. |
+| 69% | Relief Map | Each answer gets a label: negotiable / important / non-negotiable. Valleys, hills, mountains. Mountains open last. |
+| Six Hours of Silence | Storyboard | Situations, not attachment types. Hidden seek/withdraw weights highlight the "one reaches out, the other pulls back" pattern. |
+| Closer (18+) | Matches | On only if both opt in. Double-locked questions. The wishlist only ever shows shared yes/maybe. |
+
+## Privacy
+
+- Answers, guesses, threads, rules, custom questions, the capsule and voice notes are encrypted with AES-256-GCM, using a per-room key derived from `DATA_KEY`.
+- There are no accounts: each player has a random token kept in their browser. Only its hash is stored.
+- Either player can delete the room and everything in it.
+- Rooms expire `ROOM_TTL_DAYS` after the last activity. A sealed capsule outlives its room: the answers are deleted, the capsule stays until it has been open for the same period.
+- The share image is drawn in the browser from aggregates only, never the 18+ deck. The PDF export needs both players to agree, and the 18+ deck needs a second, separate agreement from both.
+- No statistics are shared across couples.
 
 ## Stack
 
 | Layer | Technology |
 |---|---|
-| Backend | Node.js 20 + Express + Socket.io |
-| Database | PostgreSQL + Prisma ORM |
-| Frontend | Vanilla JS + Tailwind CSS (CDN) |
-| Realtime | Socket.io rooms (one per game) |
-| Deploy | Railway (nixpacks) |
-
----
+| Backend | Node.js 20+, Express, Socket.io |
+| Database | PostgreSQL + Prisma (schema applied by `prisma/migrate.js`) |
+| Frontend | Vanilla JS ES modules, no build step |
+| Realtime | Socket.io pings ("room changed"). Clients refetch their own filtered state over HTTP. |
+| Deploy | Railway (nixpacks / Railpack) or Docker |
 
 ## Run locally
 
-**Requirements:** Node.js 20+, PostgreSQL running locally.
+Requires Node.js 20+ (22+ to run the tests) and PostgreSQL.
 
 ```bash
-# 1. Create the database
 createdb sdmeet
-
-# 2. Install backend dependencies
 cd backend
 npm install
-
-# 3. Configure environment
-echo "DATABASE_URL=postgresql://$(whoami)@localhost:5432/sdmeet" > .env
-
-# 4. Push schema + seed questions
-npx prisma db push
-node prisma/seed.js
-
-# 5. Start
-npm start
-# → http://localhost:3000
+cat > .env <<EOF
+DATABASE_URL=postgresql://$(whoami)@localhost:5432/sdmeet
+DATA_KEY=$(openssl rand -base64 32)
+EOF
+npm run migrate
+npm start            # http://localhost:3000
 ```
 
-Open two tabs to play both sides.
+Open two browser profiles (or one normal and one private window) to play both seats.
 
----
+With Docker: `docker-compose up --build`.
 
-## Docker Compose
+## Tests
 
 ```bash
-docker-compose up --build
-# → http://localhost:3000
+cd backend
+createdb sdmeet_test   # TEST_DATABASE_URL overrides the default local URL
+npm test               # unit + API flow against Postgres + schema drift + i18n completeness
+
+# Browser end-to-end (two players, all decks, voice, lock, map, capsule, delete):
+CAPSULE_UNIT=minutes DATA_KEY=... npm start &
+BASE_URL=http://localhost:3000 npm run test:e2e
+# E2E_WAIT_CAPSULE=1 also waits ~3 minutes for the capsule to open and runs the retake.
 ```
-
----
-
-## Deploy on Railway
-
-The repo is pre-configured for Railway via `nixpacks.toml`.
-
-1. Push repo to GitHub
-2. Railway → **New Project** → from GitHub repo
-3. Add **PostgreSQL** plugin (Railway dashboard → Add Service → Database → PostgreSQL)
-4. Set environment variables on the app service:
-
-```
-DATABASE_URL=${{Postgres.DATABASE_URL}}
-PORT=3000
-TOTAL_TURNS=20
-```
-
-5. Railway auto-deploys on every push to `main`
-
----
 
 ## Environment variables
 
 | Variable | Default | Description |
 |---|---|---|
 | `DATABASE_URL` | required | PostgreSQL connection string |
-| `PORT` | `3000` | HTTP server port |
-| `TOTAL_TURNS` | `20` | Total rounds per game session |
+| `DATA_KEY` | required in production | 32 random bytes, base64 (`openssl rand -base64 32`). **Don't change it on a live deployment**: existing data becomes unreadable. |
+| `PORT` | `3000` | HTTP port |
+| `ROOM_TTL_DAYS` | `30` | Days a room is kept after its last activity |
+| `CAPSULE_UNIT` | months | `minutes` makes capsule durations minutes (testing only) |
 
----
+## Deploy on Railway
 
-## Architecture
+1. Add the PostgreSQL plugin and set `DATABASE_URL=${{Postgres.DATABASE_URL}}` on the app.
+2. Set `DATA_KEY`. Without it the app refuses to start in production.
+3. Push. The start command runs `prisma/migrate.js` (idempotent raw SQL, no schema engine) and then the server. The healthcheck is `/healthz`.
+
+2.0 uses its own tables (`sd_*`), so the v1 tables (`Room`, `Player`, `Round`, `Question`, `Task`) stay untouched. Drop them by hand once you no longer need them.
+
+## Editing content
+
+Decks live in `backend/content/decks/*.json`, the 18+ wishlist in `backend/content/wishlist.json`, and the capsule prompts in `backend/content/capsule.json`. Every text has `ru` (source), `en` and `he`. The server refuses to start if a translation is missing or a question is malformed, and `npm test` checks the same. UI strings are in `backend/public/js/i18n.js`.
+
+## Layout
 
 ```
-sdmeet_game/
-├── backend/
-│   ├── prisma/
-│   │   ├── schema.prisma     # Room, Player, Round, Question, Task
-│   │   └── seed.js           # 120 questions + 59 tasks (idempotent upsert)
-│   ├── src/
-│   │   ├── index.js          # Express + Socket.io server
-│   │   ├── routes/room.js    # POST /api/rooms, GET /api/rooms/:id
-│   │   ├── services/
-│   │   │   └── gameService.js  # All game logic (pure functions)
-│   │   └── socket/
-│   │       └── gameSocket.js   # Real-time event handlers
-│   └── public/               # Frontend static files (served by Express)
-│       ├── index.html        # Create / join / wait screens
-│       └── game.html         # Game UI
-├── nixpacks.toml             # Railway build config
-├── docker-compose.yml        # Local Docker setup
-└── .env.example
+backend/
+  content/              decks, wishlist, capsule prompts (ru/en/he)
+  prisma/               schema.prisma + migrate.js (raw SQL, kept in sync by a test)
+  src/
+    content.js          loads + validates content
+    crypto.js           AES-GCM per-room encryption, tokens
+    game/values.js      validation of every submitted value
+    game/score.js       guesses, similarity, terrain, seek/withdraw, wishlist overlap
+    game/board.js       reveal board, card views, summary
+    services/roomService.js   rooms, stages, reveal, threads, voice, export, capsule
+    routes/api.js       REST API
+    socket.js           auth + presence + "changed" pings
+    purge.js            room lifetime
+  public/               SPA (index.html, css/, js/)
+  test/                 node:test suites + e2e/browser.mjs (Playwright)
+docs/                   design (ru) + implementation notes
 ```
-
-**Game state machine:** `WAITING_FOR_P2 → GAME_STARTED → [per-turn cycle] → FINISHED`
-
-**Per-turn cycle:**
-```
-QUESTION_SHOWN → PLAYER_ANSWERED → APPROVED (next turn)
-             ↘ TASK_SHOWN → TASK_DONE → APPROVED (next turn)
-```
-
-**Multi-room:** Each room is a UUID. Socket.io rooms isolate real-time events. Any number of concurrent games are supported.
-
-**Reconnect:** On page reload, `localStorage` holds `{roomId, playerId, playerNum}`. The server checks room state via `/api/rooms/:id` and resumes the exact round. Finished rooms clear the session so a new game can start immediately.
-
----
-
-## Question database
-
-Questions are split across three intimacy levels and served in proportion:
-
-| Level | Theme | Count | % of game |
-|---|---|---|---|
-| 1 | Light / Funny | 34 | First 30% of turns |
-| 2 | Personal / Past | 34 | Middle 40% of turns |
-| 3 | Intimate / Here & now | 52 | Final 30% of turns |
-
-Level 3 includes a **lover mode** pack — bold physical tasks and direct desire questions.
-
----
 
 ## License
 

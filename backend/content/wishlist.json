@@ -1,0 +1,23 @@
+{
+  "_comment": "Wishlist items for deck 4 (closer). Edit freely: add/remove items, keep ids stable once rooms exist. Every item needs ru, en and he.",
+  "items": [
+    { "id": "slow-morning", "label": { "ru": "Медленное утро в постели", "en": "Slow mornings in bed", "he": "בוקר איטי במיטה" } },
+    { "id": "massage", "label": { "ru": "Массаж", "en": "Massage", "he": "עיסוי" } },
+    { "id": "shower", "label": { "ru": "Душ вдвоём", "en": "Showering together", "he": "מקלחת משותפת" } },
+    { "id": "long-kiss", "label": { "ru": "Долго целоваться и не торопиться дальше", "en": "Kissing for a long time without rushing on", "he": "להתנשק הרבה זמן בלי למהר הלאה" } },
+    { "id": "say-wants", "label": { "ru": "Говорить вслух, чего хочется", "en": "Saying out loud what we want", "he": "להגיד בקול מה אנחנו רוצים" } },
+    { "id": "flirty-texts", "label": { "ru": "Откровенная переписка на расстоянии", "en": "Flirty texting while apart", "he": "התכתבות פלרטטנית מרחוק" } },
+    { "id": "video-date", "label": { "ru": "Видеосвидание с переодеванием", "en": "A dressed-up video date", "he": "דייט וידאו עם התלבשות" } },
+    { "id": "new-place", "label": { "ru": "Не только в спальне", "en": "Somewhere other than the bedroom", "he": "לא רק בחדר השינה" } },
+    { "id": "blindfold", "label": { "ru": "Повязка на глаза", "en": "Blindfold", "he": "כיסוי עיניים" } },
+    { "id": "roleplay", "label": { "ru": "Ролевая игра", "en": "Role play", "he": "משחק תפקידים" } },
+    { "id": "read-together", "label": { "ru": "Читать вместе что-то эротическое", "en": "Reading something erotic together", "he": "לקרוא יחד משהו ארוטי" } },
+    { "id": "dress-up", "label": { "ru": "Бельё или переодевание", "en": "Lingerie or dressing up", "he": "הלבשה תחתונה או תחפושת" } },
+    { "id": "lead-turns", "label": { "ru": "Вести по очереди", "en": "Taking turns leading", "he": "להוביל בתורות" } },
+    { "id": "toys", "label": { "ru": "Игрушки", "en": "Toys", "he": "צעצועים" } },
+    { "id": "vocal", "label": { "ru": "Не сдерживать звуки", "en": "Not holding back the sounds", "he": "לא לעצור את הקולות" } },
+    { "id": "date-night", "label": { "ru": "Запланированный вечер только для нас", "en": "A planned night just for us", "he": "ערב מתוכנן רק בשבילנו" } },
+    { "id": "no-phones", "label": { "ru": "Целый день без телефонов", "en": "A whole day without phones", "he": "יום שלם בלי טלפונים" } },
+    { "id": "notes", "label": { "ru": "Записки о том, чего хочется", "en": "Notes about what I want", "he": "פתקים על מה שאני רוצה" } }
+  ]
+}

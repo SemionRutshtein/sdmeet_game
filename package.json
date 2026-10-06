@@ -1,8 +1,10 @@
 {
   "name": "sdmeet-game",
-  "version": "1.0.0",
+  "version": "2.0.0",
+  "private": true,
   "scripts": {
     "build": "cd backend && npm install && npx prisma generate",
-    "start": "cd backend && node prisma/migrate.js && node prisma/seed.js && node src/index.js"
+    "start": "cd backend && node prisma/migrate.js && node src/index.js",
+    "test": "cd backend && npm test"
   }
 }
