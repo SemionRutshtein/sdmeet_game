@@ -31,6 +31,7 @@ const DYNAMIC = {
     'not_opened', 'too_large', 'consent_required', 'sealed', 'rate_limited', 'server_error'],
   'label.': ['negotiable', 'important', 'fixed'],
   'status.': ['discussed', 'later', 'rule'],
+  'statusBadge.': ['discussed', 'later', 'rule'],
   'terrain.': ['valley', 'hill', 'mountain'],
   'scene.': ['feel', 'do'],
   'wish.': ['yes', 'maybe', 'no'],
