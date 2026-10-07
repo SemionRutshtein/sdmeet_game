@@ -13,7 +13,12 @@ export function wizard({ steps, startAt = 0, finishLabel, onFinish, drafts, allo
     let value = drafts.get(step.key)?.value;
     const isLast = i === steps.length - 1;
     const next = h('button', { type: 'button', class: 'btn primary grow' }, isLast ? finishLabel : t('common.next'));
-    const sync = () => { next.disabled = busy || !step.complete(value); };
+    const why = h('p', { class: 'why tiny', 'aria-live': 'polite' });
+    const sync = () => {
+      next.disabled = busy || !step.complete(value);
+      const reason = !busy && next.disabled && step.why ? step.why(value) : null;
+      why.textContent = reason ? t(reason.key, reason.params || {}) : '';
+    };
     const input = step.render(value, v => {
       value = v;
       drafts.set(step.key, { value: v, pass: false });
@@ -34,7 +39,8 @@ export function wizard({ steps, startAt = 0, finishLabel, onFinish, drafts, allo
         saved?.pass ? h('p', { class: 'pill' }, t('wizard.passedHere')) : null,
         input,
         step.extra ? step.extra(() => value, sync) : null,
-        h('div', { class: 'wizard-nav' }, back, pass, next)
+        h('div', { class: 'wizard-nav' }, back, pass, next),
+        why
       )
     );
     root.scrollIntoView?.({ block: 'start', behavior: 'smooth' });

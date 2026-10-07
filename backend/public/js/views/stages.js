@@ -1,9 +1,9 @@
 // Stage 1 (about me), stage 2 (questions for my partner), stage 3 (answer + guess)
 // and the waiting screens between them.
 import { h, mount, toast, copyText } from '../dom.js';
-import { t, loc } from '../i18n.js';
+import { t, loc, APP_NAME } from '../i18n.js';
 import { decksIn, deck as deckOf, poolText, C } from '../content.js';
-import { questionInput, isComplete } from './inputs.js';
+import { questionInput, isComplete, whyIncomplete } from './inputs.js';
 import { wizard, firstOpen } from './wizard.js';
 import { voiceRecorder } from '../voice.js';
 
@@ -57,6 +57,7 @@ export function selfSteps({ deckIds, api, kind = 'self' }) {
           );
         },
         complete: val => !!val && isComplete(q, d, val.v, 'self') && (!d.labels || !!val.label),
+        why: val => whyIncomplete(q, d, val?.v, 'self') || (d.labels && !val?.label ? { key: 'why.label' } : null),
         save: (val, pass) => api.saveAnswer({ kind, qkey: key, pass, value: pass ? undefined : val.v, label: pass ? undefined : val.label })
       });
     });
@@ -191,6 +192,7 @@ export function stage3View({ state, api, drafts, refresh, partnerName }) {
         }));
       },
       complete: val => !!(val?.text?.trim() || val?.voiceId),
+      why: () => ({ key: 'why.reply' }),
       save: (val, pass) => api.saveAnswer({ kind: 'reply', qkey: a.id, pass, value: pass ? undefined : val })
     });
   }
@@ -203,6 +205,7 @@ export function stage3View({ state, api, drafts, refresh, partnerName }) {
         prompt: h('div', {}, h('div', { class: 'small muted', style: { fontFamily: 'var(--sans)' } }, t('stage3.guessIntro', { name: partnerName })), loc(q.prompt)),
         render: (val, onChange) => questionInput({ q, deck: d, value: val, mode: 'guess', onChange }),
         complete: val => isComplete(q, d, val, 'guess'),
+        why: val => whyIncomplete(q, d, val, 'guess'),
         save: (val, pass) => api.saveAnswer({ kind: 'guess', qkey, pass, value: pass ? undefined : val })
       });
     }
@@ -233,7 +236,7 @@ export function inviteBox(roomId) {
     h('div', {}, t('invite.text')),
     h('div', { class: 'copy-box' }, h('code', {}, url),
       h('button', { class: 'btn ghost small', onclick: async () => { if (await copyText(url)) toast(t('common.copied')); } }, t('common.copy')),
-      navigator.share ? h('button', { class: 'btn ghost small', onclick: () => navigator.share({ title: 'SDMeet', text: t('invite.shareText'), url }).catch(() => {}) }, t('common.share')) : null));
+      navigator.share ? h('button', { class: 'btn ghost small', onclick: () => navigator.share({ title: APP_NAME, text: t('invite.shareText'), url }).catch(() => {}) }, t('common.share')) : null));
 }
 
 export function waitingView({ state, partnerName, enterReview, reason }) {

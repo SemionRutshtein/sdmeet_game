@@ -53,7 +53,7 @@ export function mapView(ctx) {
       class: 'btn primary', onclick: () => {
         const canvas = drawShareImage({ summary: s, state, includeRules: shareRules });
         const img = h('img', { class: 'share-preview', alt: t('map.title'), src: canvas.toDataURL('image/png') });
-        const a = h('a', { class: 'btn ghost', download: 'sdmeet-our-map.png', href: img.src }, '⬇ ', t('map.download'));
+        const a = h('a', { class: 'btn ghost', download: 'two-maps-our-map.png', href: img.src }, '⬇ ', t('map.download'));
         mount(preview, img, h('div', { class: 'row', style: { justifyContent: 'center' } }, a));
       }
     }, t('map.makeImage'));

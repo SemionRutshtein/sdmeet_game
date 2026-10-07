@@ -2,10 +2,16 @@
 // Deck content carries its own translations (backend/content); this file is
 // only the interface. test/i18n.test.js checks that every key used in the
 // code exists in all three languages.
+export const APP_NAME = 'Two Maps';
 export const LANGS = ['en', 'ru', 'he'];
 const STORAGE_KEY = 'sdmeet2.lang';
 
 const en = {
+  why: {
+    answerOrPass: 'Pick an answer, or tap Pass.', rank: '{k} of {n} chosen. Tap at least {n}.', custom: 'Write your own answer in the box.',
+    slider: 'Move or tap the slider.', scene: 'Pick at least one feeling and one action.', wishlist: '{k} of {n} answered. Every item needs yes, maybe or no.',
+    label: 'Now pick how much this matters.', reply: 'Write an answer, record a voice note, or tap Pass.'
+  },
   common: {
     you: 'You', partner: 'your partner', next: 'Next', back: 'Back', pass: 'Pass', done: 'Done', save: 'Save', saved: 'Saved',
     cancel: 'Cancel', close: 'Close', copy: 'Copy', copied: 'Copied', share: 'Share', open: 'Open', remove: 'Remove',
@@ -57,7 +63,8 @@ const en = {
   partner: { atStage: 'stage {n}', done: 'done', notJoined: 'Partner hasn\'t joined yet' },
   invite: { text: 'Send this link to your partner. They can join any time and play at their own pace.', shareText: 'Let\'s draw our map' },
   input: {
-    multiHint: 'Pick all that apply.', rankHint: 'Tap in order, most important first.', rankPickHint: 'Tap your top {n} in order.',
+    multiHint: 'Pick all that apply.', rankHint: 'Tap at least your top {n}, most important first. You can rank more.', rankPickHint: 'Tap your top {n} in order.',
+    rankCount: '{k} of {n} chosen', rankCountMore: '{k} ranked',
     rankGuessHint: 'Pick what you think is their #1.', reset: 'Reset', moveSlider: 'Move the slider', typeHere: 'Write here…',
     oneLine: 'One line', yourOption: 'Your own answer', optional: '(optional)',
     weatherPhrase: 'In one phrase', weatherPlaceholder: 'e.g. quiet and grey, then it passes'
@@ -123,7 +130,7 @@ const en = {
     rules: 'Our rules', noRules: 'No rules yet. Use "Make it our rule" on a card.',
     later: 'Come back later', noLater: 'Nothing saved for later.',
     share: 'Share image', shareNote: 'Climate, relief and accuracy. Never a single answer word for word, and never the 18+ deck.',
-    makeImage: 'Make the image', download: 'Download', shareFooter: 'Drawn together on SDMeet',
+    makeImage: 'Make the image', download: 'Download', shareFooter: 'Drawn together on Two Maps',
     export: 'Export to PDF', exportNote: 'A printable page with the cards you opened. Needs both of you to agree.',
     exportNeedsBoth: 'Available once both of you agree.', openExport: 'Open printable version'
   },
@@ -173,6 +180,11 @@ const en = {
 };
 
 const ru = {
+  why: {
+    answerOrPass: 'Выбери ответ или нажми «Пас».', rank: 'Выбрано {k} из {n}. Нужно хотя бы {n}.', custom: 'Напиши свой вариант в поле.',
+    slider: 'Сдвинь ползунок или нажми на него.', scene: 'Выбери хотя бы одно чувство и одно действие.', wishlist: 'Отвечено {k} из {n}. Для каждого пункта нужно «да», «может» или «нет».',
+    label: 'Теперь отметь, насколько это важно.', reply: 'Напиши ответ, запиши голосовое или нажми «Пас».'
+  },
   common: {
     you: 'Ты', partner: 'партнёр', next: 'Дальше', back: 'Назад', pass: 'Пас', done: 'Готово', save: 'Сохранить', saved: 'Сохранено',
     cancel: 'Отмена', close: 'Закрыть', copy: 'Копировать', copied: 'Скопировано', share: 'Поделиться', open: 'Открыть', remove: 'Убрать',
@@ -224,7 +236,8 @@ const ru = {
   partner: { atStage: 'этап {n}', done: 'готово', notJoined: 'Партнёр ещё не зашёл' },
   invite: { text: 'Отправь эту ссылку партнёру. Войти можно в любой момент и играть в своём темпе.', shareText: 'Давай нарисуем нашу карту' },
   input: {
-    multiHint: 'Можно выбрать несколько.', rankHint: 'Нажимай по порядку: сначала самое важное.', rankPickHint: 'Выбери топ-{n} по порядку.',
+    multiHint: 'Можно выбрать несколько.', rankHint: 'Выбери хотя бы топ-{n} по порядку, самое важное первым. Можно и больше.', rankPickHint: 'Выбери топ-{n} по порядку.',
+    rankCount: 'Выбрано {k} из {n}', rankCountMore: 'Расставлено: {k}',
     rankGuessHint: 'Выбери, что у партнёра на первом месте.', reset: 'Сбросить', moveSlider: 'Сдвинь ползунок', typeHere: 'Напиши здесь…',
     oneLine: 'Одна строка', yourOption: 'Свой вариант', optional: '(необязательно)',
     weatherPhrase: 'Одной фразой', weatherPlaceholder: 'например: тихо и серо, потом проходит'
@@ -290,7 +303,7 @@ const ru = {
     rules: 'Наши правила', noRules: 'Правил пока нет. На карточке есть кнопка «Сделать нашим правилом».',
     later: 'Вернуться позже', noLater: 'Ничего не отложено.',
     share: 'Картинка', shareNote: 'Климат, рельеф и точность. Ни одного ответа дословно, колода 18+ — никогда.',
-    makeImage: 'Сделать картинку', download: 'Скачать', shareFooter: 'Нарисовано вдвоём в SDMeet',
+    makeImage: 'Сделать картинку', download: 'Скачать', shareFooter: 'Нарисовано вдвоём в Two Maps',
     export: 'Экспорт в PDF', exportNote: 'Страница для печати с открытыми карточками. Нужно согласие обоих.',
     exportNeedsBoth: 'Станет доступно, когда согласятся оба.', openExport: 'Открыть версию для печати'
   },
@@ -340,6 +353,11 @@ const ru = {
 };
 
 const he = {
+  why: {
+    answerOrPass: 'בחרו תשובה או לחצו דלג.', rank: 'נבחרו {k} מתוך {n}. צריך לפחות {n}.', custom: 'כתבו את התשובה שלכם בתיבה.',
+    slider: 'הזיזו את המחוון או לחצו עליו.', scene: 'בחרו לפחות רגש אחד ופעולה אחת.', wishlist: 'נענו {k} מתוך {n}. לכל פריט צריך כן, אולי או לא.',
+    label: 'עכשיו סמנו כמה זה חשוב.', reply: 'כתבו תשובה, הקליטו הודעה קולית או לחצו דלג.'
+  },
   common: {
     you: 'את/ה', partner: 'בן/בת הזוג', next: 'הבא', back: 'חזרה', pass: 'דלג', done: 'סיום', save: 'שמירה', saved: 'נשמר',
     cancel: 'ביטול', close: 'סגירה', copy: 'העתקה', copied: 'הועתק', share: 'שיתוף', open: 'פתיחה', remove: 'הסרה',
@@ -391,7 +409,8 @@ const he = {
   partner: { atStage: 'שלב {n}', done: 'סיים/ה', notJoined: 'בן/בת הזוג עוד לא הצטרפו' },
   invite: { text: 'שלחו את הקישור הזה לבן/בת הזוג. אפשר להצטרף בכל זמן ולשחק בקצב שלכם.', shareText: 'בוא/י נצייר את המפה שלנו' },
   input: {
-    multiHint: 'אפשר לבחור כמה.', rankHint: 'לחצו לפי הסדר, הכי חשוב קודם.', rankPickHint: 'בחרו את ה־{n} המובילים לפי הסדר.',
+    multiHint: 'אפשר לבחור כמה.', rankHint: 'בחרו לפחות את ה־{n} המובילים, הכי חשוב קודם. אפשר גם יותר.', rankPickHint: 'בחרו את ה־{n} המובילים לפי הסדר.',
+    rankCount: 'נבחרו {k} מתוך {n}', rankCountMore: 'דורגו {k}',
     rankGuessHint: 'בחרו מה לדעתכם במקום הראשון אצלם.', reset: 'איפוס', moveSlider: 'הזיזו את המחוון', typeHere: 'כתבו כאן…',
     oneLine: 'שורה אחת', yourOption: 'תשובה משלך', optional: '(לא חובה)',
     weatherPhrase: 'במשפט אחד', weatherPlaceholder: 'למשל: שקט ואפור, ואז עובר'
@@ -457,7 +476,7 @@ const he = {
     rules: 'הכללים שלנו', noRules: 'עוד אין כללים. בכל קלף יש כפתור "להפוך לכלל שלנו".',
     later: 'לחזור לזה', noLater: 'לא נשמר כלום לאחר כך.',
     share: 'תמונה לשיתוף', shareNote: 'אקלים, תבליט ודיוק. אף תשובה מילה במילה, ואף פעם לא חפיסת ה־18+.',
-    makeImage: 'יצירת תמונה', download: 'הורדה', shareFooter: 'צוירה יחד ב־SDMeet',
+    makeImage: 'יצירת תמונה', download: 'הורדה', shareFooter: 'צוירה יחד ב־Two Maps',
     export: 'ייצוא ל־PDF', exportNote: 'דף להדפסה עם הקלפים שנפתחו. צריך הסכמה של שניכם.',
     exportNeedsBoth: 'יהיה זמין כששניכם תסכימו.', openExport: 'פתיחת גרסה להדפסה'
   },

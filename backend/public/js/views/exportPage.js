@@ -1,7 +1,7 @@
 // Printable export of opened cards (only once both agreed). The browser's
 // "Save as PDF" turns it into a file.
 import { h, mount } from '../dom.js';
-import { t, loc } from '../i18n.js';
+import { t, loc, APP_NAME } from '../i18n.js';
 import { roomApi, sessions } from '../api.js';
 import { deck as deckOf, poolText, wishlistLabel } from '../content.js';
 import { answerOrPass, labelPill, terrainPill } from './format.js';
@@ -63,7 +63,7 @@ export async function exportView(root, roomId) {
     h('div', { class: 'row between no-print', style: { margin: '1rem 0' } },
       h('a', { href: `/room/${roomId}` }, '← ', t('common.back')),
       h('button', { class: 'btn primary', onclick: () => window.print() }, '🖨 ', t('export.print'))),
-    h('h1', {}, `SDMeet — ${nm[1]} & ${nm[2]}`),
+    h('h1', {}, `${APP_NAME} — ${nm[1]} & ${nm[2]}`),
     h('p', { class: 'muted' }, new Date(data.generatedAt).toLocaleString()),
     data.cards.map(cardBlock)
   );

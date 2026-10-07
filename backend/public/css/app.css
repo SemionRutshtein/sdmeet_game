@@ -233,6 +233,7 @@ input[type="text"]:focus, textarea:focus { border-color: var(--gold-dim); }
 .question-prompt { font-family: var(--serif); font-size: 1.35rem; line-height: 1.35; margin-bottom: 1.25rem; }
 .wizard-nav { display: flex; gap: 0.5rem; margin-top: 1.5rem; flex-wrap: wrap; }
 .wizard-nav .grow { flex: 1; }
+.why { color: var(--gold); margin: 0.6rem 0 0; min-height: 1em; text-align: end; }
 .labels-bar { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px dashed var(--border); }
 .pill {
   display: inline-flex; align-items: center; gap: 0.3rem;

@@ -1,4 +1,4 @@
-# SDMeet 2.0 — game design (source of truth)
+# Two Maps (бывш. SDMeet 2.0) — game design (source of truth)
 
 Исходный язык контента — русский. EN/HE переводы делаются из этого файла.
 

@@ -1,4 +1,4 @@
-# SDMeet 2.0
+# Two Maps
 
 An online game for two. Each of you draws a map of yourself and guesses your partner's. Then you open it together and see where you matched and where you missed. It's not a compatibility test, it's a reason to talk.
 

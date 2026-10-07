@@ -1,4 +1,4 @@
-# SDMeet 2.0 — implementation notes
+# Two Maps — implementation notes
 
 The design itself lives in [`GAME_DESIGN.ru.md`](GAME_DESIGN.ru.md) (Russian is the source language).
 This file records the decisions the design leaves open and how the code maps to it.
@@ -26,6 +26,8 @@ Requiring the partner's stage 1 to be done matters because of the freeze rule: o
 so it must already be complete.
 
 **Freeze.** Your stage-1 answers stay editable (even after you hit "done") until your partner saves their first guess.
+
+**Rank questions.** "Top N of M" questions (deck 2 values) need exactly N. Full rankings (deck 1 Q2, deck 4 Q3) need at least the top 3; ranking the rest is optional, since nothing is scored past #1.
 
 **What is guessed.** Only questions with `predictable: true`:
 

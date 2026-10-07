@@ -46,3 +46,10 @@ test('guesses only for predictable questions', () => {
   throwsBad(() => V.normalizeGuess(q('no-gloss', 'first-impression'), deck('no-gloss'), { text: 'x' }));
   assert.deepEqual(V.normalizeGuess(q('no-gloss', 'bad-day-needs'), deck('no-gloss'), { option: 'hug' }), { option: 'hug' });
 });
+
+test('full rankings need at least the top 3; top-N picks need exactly N', () => {
+  assert.equal(self('no-gloss', 'bad-day-needs', { order: ['hug', 'alone', 'listen'] }).order.length, 3);
+  assert.equal(self('no-gloss', 'bad-day-needs', { order: ['hug', 'alone', 'listen', 'advice', 'distract', 'hands-off'] }).order.length, 6);
+  throwsBad(() => self('no-gloss', 'bad-day-needs', { order: ['hug', 'alone'] }));
+  throwsBad(() => self('perpetual', 'values', { order: ['freedom', 'security', 'family'] }));
+});
