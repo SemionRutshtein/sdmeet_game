@@ -5,6 +5,8 @@ const { Server } = require('socket.io');
 const path = require('path');
 
 const config = require('./config');
+const prisma = require('./db');
+const { initKeys } = require('./crypto');
 const { content } = require('./content');
 const { setupSocket } = require('./socket');
 const { schedulePurge } = require('./purge');
@@ -15,7 +17,6 @@ const PUBLIC_DIR = path.join(__dirname, '../public');
 function createApp() {
   // Fail fast on broken content or a missing key instead of at the first request.
   content();
-  require('./crypto').encryptJson('boot-check', true);
 
   const app = express();
   app.set('trust proxy', 1);
@@ -43,11 +44,20 @@ function createApp() {
   return { app, httpServer, io };
 }
 
-if (require.main === module) {
+async function start() {
   const { httpServer } = createApp();
+  const source = await initKeys(prisma);
+  console.log(`[crypto] encryption key from ${source === 'env' ? 'DATA_KEY' : 'the database'}`);
   schedulePurge();
   httpServer.listen(config.port, () => {
     console.log(`sdmeet 2.0 running on port ${config.port}`);
+  });
+}
+
+if (require.main === module) {
+  start().catch(e => {
+    console.error('Startup failed:', e);
+    process.exit(1);
   });
 }
 
