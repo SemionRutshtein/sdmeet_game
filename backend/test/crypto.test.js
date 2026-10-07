@@ -3,10 +3,12 @@ const assert = require('node:assert/strict');
 const crypto = require('../src/crypto');
 
 test('round trip, and one room cannot read another', () => {
-  const enc = crypto.encryptJson('room-a', { secret: 'hi' });
+  // long plaintext: a 2-letter one can show up in random base64 by chance
+  const secret = 'very-secret-plaintext-value';
+  const enc = crypto.encryptJson('room-a', { secret });
   assert.ok(enc.startsWith('v1:'));
-  assert.ok(!enc.includes('hi'));
-  assert.deepEqual(crypto.decryptJson('room-a', enc), { secret: 'hi' });
+  assert.ok(!enc.includes(secret));
+  assert.deepEqual(crypto.decryptJson('room-a', enc), { secret });
   assert.throws(() => crypto.decryptJson('room-b', enc));
   const buf = crypto.encryptBuffer('room-a', Buffer.from('audio'));
   assert.equal(crypto.decryptBuffer('room-a', buf).toString(), 'audio');

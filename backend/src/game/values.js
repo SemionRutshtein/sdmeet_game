@@ -45,6 +45,14 @@ function pickMany(options, ids) {
   return unique;
 }
 
+// "Top N of M" questions need exactly N. Full rankings need at least the top 3
+// (ranking every last item was tedious and nothing is scored past #1).
+const RANK_MIN = 3;
+function rankRange(q) {
+  if (q.pick) return { min: q.pick, max: q.pick };
+  return { min: Math.min(RANK_MIN, q.options.length), max: q.options.length };
+}
+
 function intInRange(v, min, max) {
   if (!Number.isInteger(v) || v < min || v > max) throw bad();
   return v;
@@ -69,10 +77,10 @@ function normalizeSelf(q, deck, value, { wishlistIds } = {}) {
     case 'multi':
       return { options: pickMany(q.options, value.options) };
     case 'rank': {
-      const need = q.pick || q.options.length;
+      const { min, max } = rankRange(q);
       const order = value.order;
-      if (!Array.isArray(order) || order.length !== need) throw bad();
-      if (new Set(order).size !== need || !order.every(id => hasOption(q.options, id))) throw bad();
+      if (!Array.isArray(order) || order.length < min || order.length > max) throw bad();
+      if (new Set(order).size !== order.length || !order.every(id => hasOption(q.options, id))) throw bad();
       return { order: [...order] };
     }
     case 'scale':
@@ -152,6 +160,7 @@ function normalizeLabel(label) {
 
 module.exports = {
   AppError,
+  rankRange,
   LABELS,
   WISH_LEVELS,
   cleanText,

@@ -1,5 +1,5 @@
 import { h } from '../dom.js';
-import { t, getLang, setLang, LANGS } from '../i18n.js';
+import { t, getLang, setLang, LANGS, APP_NAME } from '../i18n.js';
 
 function partnerProgress(p, status) {
   if (status !== 'playing') return '';
@@ -12,7 +12,7 @@ function partnerProgress(p, status) {
 export function topbar({ state, onMenu } = {}) {
   const p = state?.partner;
   return h('nav', { class: 'topbar' },
-    h('a', { class: 'logo', href: '/' }, 'SDMeet'),
+    h('a', { class: 'logo', href: '/' }, APP_NAME),
     state ? h('span', { class: 'partner-chip' },
       h('span', { class: `dot${p?.online ? ' on' : ''}` }),
       p ? `${p.name}${partnerProgress(p, state.room.status) ? ' · ' + partnerProgress(p, state.room.status) : ''}` : t('partner.notJoined')) : null,

@@ -50,7 +50,7 @@ async function start() {
   console.log(`[crypto] encryption key from ${source === 'env' ? 'DATA_KEY' : 'the database'}`);
   schedulePurge();
   httpServer.listen(config.port, () => {
-    console.log(`sdmeet 2.0 running on port ${config.port}`);
+    console.log(`Two Maps running on port ${config.port}`);
   });
 }
 

@@ -4,7 +4,7 @@ import { t, loc, formatDate } from '../i18n.js';
 import { C, deck as deckOf, decksIn } from '../content.js';
 import { wizard, firstOpen } from './wizard.js';
 import { selfSteps } from './stages.js';
-import { questionInput, isComplete } from './inputs.js';
+import { questionInput, isComplete, whyIncomplete } from './inputs.js';
 import { answerOrPass, formatValue } from './format.js';
 
 export function capsuleSection(ctx) {
@@ -142,6 +142,7 @@ export function capsuleSection(ctx) {
           prompt: loc(q.prompt),
           render: (val, onChange) => questionInput({ q, deck: d, value: val, mode: 'guess', onChange }),
           complete: val => isComplete(q, d, val, 'guess'),
+          why: val => whyIncomplete(q, d, val, 'guess'),
           save: (val, pass) => ctx.api.saveAnswer({ kind: 'retake_guess', qkey, pass, value: pass ? undefined : val })
         };
       });

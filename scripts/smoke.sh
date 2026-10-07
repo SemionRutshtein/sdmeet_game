@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# SDMeet 2.0 smoke test with curl + jq: plays a whole game through the API
+# Two Maps smoke test with curl + jq: plays a whole game through the API
 # (create -> join -> stage 1/2/3 -> reveal -> thread -> summary -> export ->
 # capsule -> delete) and checks the important rules on the way.
 #

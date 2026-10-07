@@ -1,6 +1,6 @@
 // "Our map" share image, drawn locally on a canvas. Built only from the
 // summary (no verbatim answers) and never from the 18+ deck.
-import { t, loc, getLang } from './i18n.js';
+import { t, loc, getLang, APP_NAME } from './i18n.js';
 import { deck as deckOf, weatherIcon } from './content.js';
 
 const W = 1080;
@@ -43,7 +43,7 @@ export function drawShareImage({ summary, state, includeRules }) {
   let y = 130;
   c.fillStyle = '#C9A84C';
   c.font = `600 26px ${sans}`;
-  c.fillText('S D M E E T', W / 2, y);
+  c.fillText(APP_NAME.toUpperCase().split('').join(' '), W / 2, y);
   y += 90;
   c.fillStyle = '#EDE9E4';
   c.font = `64px ${serif}`;
