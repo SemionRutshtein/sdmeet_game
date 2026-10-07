@@ -6,10 +6,12 @@ process.env.NODE_ENV = 'test';
 const prisma = require('../src/db');
 const { migrate } = require('../prisma/migrate');
 const { createApp } = require('../src/index');
+const { initKeys } = require('../src/crypto');
 
 async function startServer() {
   await migrate(prisma);
   await prisma.$executeRawUnsafe('TRUNCATE "sd_rooms" CASCADE');
+  await initKeys(prisma);
   const { httpServer, io } = createApp();
   await new Promise(r => httpServer.listen(0, r));
   const base = `http://127.0.0.1:${httpServer.address().port}`;

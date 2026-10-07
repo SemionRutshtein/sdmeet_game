@@ -10,18 +10,40 @@ const DEV_KEY = Buffer.alloc(32, 7); // only ever used outside production
 let masterKey = null;
 const roomKeys = new Map(); // small cache, bounded below
 
+function parseKey(raw, what) {
+  const key = Buffer.from(raw, 'base64');
+  if (key.length !== 32) throw new Error(`${what} must be 32 bytes, base64-encoded`);
+  return key;
+}
+
+// Called once at startup. DATA_KEY from the environment wins. Without it the
+// server generates a key on first start and keeps it in sd_settings, so a
+// fresh deploy works with no manual step. Copy that value into DATA_KEY to
+// keep the key out of the database (same key, nothing to re-encrypt).
+async function initKeys(prisma) {
+  if (process.env.DATA_KEY) {
+    masterKey = parseKey(process.env.DATA_KEY, 'DATA_KEY');
+    roomKeys.clear();
+    return 'env';
+  }
+  const fresh = crypto.randomBytes(32).toString('base64');
+  await prisma.$executeRaw`
+    INSERT INTO "sd_settings" ("key", "value") VALUES ('data_key', ${fresh})
+    ON CONFLICT ("key") DO NOTHING`;
+  const rows = await prisma.$queryRaw`SELECT "value" FROM "sd_settings" WHERE "key" = 'data_key'`;
+  masterKey = parseKey(rows[0].value, 'stored data_key');
+  roomKeys.clear();
+  console.warn('[crypto] DATA_KEY is not set: using the key stored in the database (sd_settings.data_key). ' +
+    'For production, copy it into the DATA_KEY variable: SELECT value FROM sd_settings WHERE key = \'data_key\';');
+  return 'db';
+}
+
 function loadMasterKey() {
-  const raw = process.env.DATA_KEY;
-  if (raw) {
-    const key = Buffer.from(raw, 'base64');
-    if (key.length !== 32) throw new Error('DATA_KEY must be 32 bytes, base64-encoded');
-    return key;
-  }
-  // Railway may not set NODE_ENV, so a Railway environment counts as production too.
+  if (process.env.DATA_KEY) return parseKey(process.env.DATA_KEY, 'DATA_KEY');
+  // Only unit tests that never call initKeys() get here.
   if (process.env.NODE_ENV === 'production' || process.env.RAILWAY_ENVIRONMENT) {
-    throw new Error('DATA_KEY is required in production (32 random bytes, base64). Generate: openssl rand -base64 32');
+    throw new Error('Encryption key not initialised: call initKeys() before serving requests');
   }
-  console.warn('[crypto] DATA_KEY not set: using an insecure development key');
   return DEV_KEY;
 }
 
@@ -70,4 +92,4 @@ function hashToken(token) {
   return crypto.createHash('sha256').update(String(token)).digest('hex');
 }
 
-module.exports = { encryptJson, decryptJson, encryptBuffer, decryptBuffer, newToken, hashToken };
+module.exports = { initKeys, encryptJson, decryptJson, encryptBuffer, decryptBuffer, newToken, hashToken };

@@ -107,6 +107,12 @@ const TABLES = [
   )`
 ];
 
+TABLES.push(`CREATE TABLE IF NOT EXISTS "sd_settings" (
+    "key" TEXT NOT NULL,
+    "value" TEXT NOT NULL,
+    CONSTRAINT "sd_settings_pkey" PRIMARY KEY ("key")
+  )`);
+
 const INDEXES = [
   `CREATE INDEX IF NOT EXISTS "sd_rooms_expiresAt_idx" ON "sd_rooms"("expiresAt")`,
   `CREATE UNIQUE INDEX IF NOT EXISTS "sd_players_tokenHash_key" ON "sd_players"("tokenHash")`,

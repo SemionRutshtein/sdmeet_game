@@ -170,3 +170,11 @@ model Capsule {
 
   @@map("sd_capsules")
 }
+
+// App settings, e.g. the generated encryption key when DATA_KEY isn't set.
+model Setting {
+  key   String @id
+  value String
+
+  @@map("sd_settings")
+}
