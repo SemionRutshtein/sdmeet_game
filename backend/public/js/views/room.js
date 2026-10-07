@@ -8,6 +8,10 @@ import { boardView, cardSheet } from './reveal.js';
 import { mapView } from './map.js';
 import { capsuleSection } from './capsule.js';
 import { topbar } from './topbar.js';
+import { briefingView, agreementsView } from './briefing.js';
+import { howToPlaySheet } from './explainer.js';
+import { seen, markSeen } from '../prefs.js';
+import { transition } from '../motion.js';
 
 const draftsByRoom = new Map(); // survives language switches
 
@@ -31,11 +35,15 @@ export async function roomView(root, roomId, navigate) {
   let tab = 'board';
   let openSheet = null;
   let alive = true;
+  let forceBrief = false;
 
   const header = h('div');
   const banner = h('div');
-  const body = h('div');
+  const body = h('div', { class: 'view' });
   mount(root, header, banner, body);
+  mount(body, h('div', { class: 'skeleton-stack', 'aria-busy': 'true' },
+    h('div', { class: 'skeleton', style: { height: '7rem' } }),
+    h('div', { class: 'skeleton', style: { height: '18rem' } })));
 
   const ctx = {
     api,
@@ -96,7 +104,11 @@ export async function roomView(root, roomId, navigate) {
   function computeKey() {
     const { room, me } = state;
     if (room.status === 'archived') return 'capsule';
-    if (room.status === 'reveal') return tab === 'map' ? 'map' : 'board';
+    if (room.status === 'reveal') {
+      if (!seen(roomId, 'agree')) return 'agree';
+      return tab === 'map' ? 'map' : 'board';
+    }
+    if (forceBrief || (!me.stage1Done && !seen(roomId, 'brief'))) return 'brief';
     if (review && !state.frozen) return 'review';
     if (!me.stage1Done) return 'stage1';
     if (!me.stage2Done) return 'stage2';
@@ -108,7 +120,7 @@ export async function roomView(root, roomId, navigate) {
   function decide() {
     const partnerName = state.partner?.name || t('common.partner');
     mount(header, topbar({ state, onMenu: openMenu }));
-    const showInvite = !state.partner && state.room.status === 'playing' && computeKey() !== 'wait-partner';
+    const showInvite = !state.partner && state.room.status === 'playing' && !['wait-partner', 'brief'].includes(computeKey());
     mount(banner, showInvite ? inviteBox(roomId) : null);
 
     const key = computeKey();
@@ -117,7 +129,14 @@ export async function roomView(root, roomId, navigate) {
     const enterReview = () => { review = true; decide(); };
     const exitReview = () => { review = false; decide(); };
     const common = { state, api, drafts, refresh, partnerName, enterReview, exitReview };
-    if (key === 'stage1') view = stage1View(common);
+    if (key === 'brief') {
+      view = briefingView({
+        state,
+        onStart: () => { markSeen(roomId, 'brief'); forceBrief = false; decide(); window.scrollTo?.({ top: 0, behavior: 'smooth' }); }
+      });
+    } else if (key === 'agree') {
+      view = agreementsView({ onAgree: () => { markSeen(roomId, 'agree'); decide(); window.scrollTo?.({ top: 0 }); } });
+    } else if (key === 'stage1') view = stage1View(common);
     else if (key === 'review') view = stage1View({ ...common, review: true });
     else if (key === 'stage2') view = stage2View(common);
     else if (key === 'stage3') view = stage3View(common);
@@ -136,7 +155,8 @@ export async function roomView(root, roomId, navigate) {
       view = { el: h('div', {}, h('p', { class: 'banner small' }, t('room.archived')), cap.el), render: s => cap.render(s) };
       view.render(state);
     }
-    mount(body, view.el);
+    const el = view.el;
+    transition(() => mount(body, el));
   }
 
   // Waiting screens follow the partner live, so they are rebuilt on every
@@ -150,6 +170,10 @@ export async function roomView(root, roomId, navigate) {
         h('button', { class: 'close-x', onclick: s.close }, '✕')),
       h('div', { class: 'stack' },
         state.room.status === 'playing' ? inviteBox(roomId) : null,
+        h('button', { class: 'btn ghost block', onclick: () => { s.close(); howToPlaySheet(); } }, '▶ ', t('menu.howTo')),
+        state.room.status === 'playing'
+          ? h('button', { class: 'btn ghost block', onclick: () => { s.close(); forceBrief = true; decide(); window.scrollTo?.(0, 0); } }, '🧭 ', t('menu.briefing'))
+          : null,
         h('a', { class: 'btn ghost block', href: '/' }, t('menu.myRooms')),
         h('p', { class: 'small muted' }, t('menu.expires', { date: new Date(state.room.expiresAt).toLocaleDateString() })),
         h('button', { class: 'btn danger block', onclick: () => { s.close(); confirmDelete(); } }, t('danger.delete'))));

@@ -21,6 +21,8 @@ A room has two players and 1–4 decks (default: *No Gloss* + *69%*).
 | 3. Answer and predict | async | Answer your partner's picks, and guess how they answered stage 1. Your first guess freezes their stage-1 answers. |
 | 4. Reveal | together | A board of face-down cards. Take turns opening them. Each card has both answers, the guesses (hit/miss), a 1–2 line conclusion, a question to talk about, a thread with text and voice notes, and actions: discussed / come back later / make it our rule. |
 
+Before stage 1 each player gets a short briefing (goal, stages with timings, house rules); each deck opens with an intro card explaining what it explores and the research behind it; the reveal starts with five spoken agreements and "Our map" ends with a short closing ritual. The home and invite pages have an animated walkthrough of the whole game.
+
 After that comes **Our map** (accuracy, climate, relief, rules, share image, PDF export) and the **time capsule**, which opens in 3, 6 or 12 months and offers a retake for "then / now".
 
 | Deck | Reveal | Notes |

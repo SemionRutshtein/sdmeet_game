@@ -76,3 +76,20 @@ deck 4 cards are included only with a second, separate consent from both.
 
 **v1.** The old turn-based game and its tables (`Room`, `Player`, `Round`, `Question`, `Task`) are no longer used. 2.0 uses new tables
 prefixed `sd_`, so deploying doesn't touch the old data. Drop the old tables by hand when you're sure you don't need them.
+
+## Onboarding and facilitation
+
+The flow borrows from how a couples workshop is run, without turning it into therapy:
+
+- **Home and invite page:** an animated four-scene walkthrough (answer → guess → open together → keep) built on a real deck-1
+  question. Autoplays, swipeable, keyboard-accessible, and static with `prefers-reduced-motion`. Also available from the room menu ("How to play").
+- **Briefing** (once per player per room, re-openable from the menu): what the game is, the goal, the four stages with time
+  estimates and solo/together labels, house rules, and the invite link for the creator.
+- **Deck intro cards** before each deck in stage 1: what the deck explores and the research behind it (`why` in the deck JSON),
+  question count and a time estimate.
+- **Stage 3 framing:** a card before the partner's questions and a "switch perspective" card before guessing.
+- **Agreements** before the reveal board: five spoken agreements (listen to understand, ask before explaining, misses are useful,
+  anyone can pause, no fixing tonight).
+- **Closing the circle** on "Our map" once every card is open: appreciation, naming what stung, a break.
+
+The "seen" flags for the briefing and agreements live in `localStorage` (`twomaps.seen`); losing them only shows the screen again.

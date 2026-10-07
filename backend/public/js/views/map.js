@@ -109,6 +109,9 @@ export function mapView(ctx) {
         both(s.consents.export)
           ? h('a', { class: 'btn primary', style: { marginTop: '0.75rem' }, href: `/room/${state.room.id}/export`, target: '_blank', rel: 'noopener' }, '🖨 ', t('map.openExport'))
           : h('p', { class: 'tiny muted', style: { marginTop: '0.5rem' } }, t('map.exportNeedsBoth'))),
+      s.cardsOpened === s.cardsTotal ? h('div', { class: 'card aftercare' },
+        h('h3', {}, '🕯️ ', t('after.title')),
+        h('ol', { class: 'agreements' }, [1, 2, 3].map(n => h('li', { style: { '--i': n } }, t(`after.a${n}`))))) : null,
       capsule.el,
       h('div', { class: 'card' }, h('h3', {}, t('danger.title')),
         h('p', { class: 'small muted' }, t('danger.text')),

@@ -15,6 +15,11 @@
     "en": "Only on if you both want it. Locked questions open only when both of you press \"show\".",
     "he": "פעיל רק אם שניכם רוצים. שאלות נעולות נפתחות רק כששניכם לוחצים \"הצג\"."
   },
+  "why": {
+    "ru": "Исследование Joel et al. (PNAS, 2020): лучше всего качество отношений предсказывают сами отношения — ощущение отклика, желание, признательность. Эта колода — про потребности, сказанные бережно.",
+    "en": "Joel et al. (PNAS, 2020): the best predictors of a good relationship are features of the relationship itself, such as feeling responded to, desire and appreciation. This deck is about needs, said with care.",
+    "he": "Joel ושותפים (PNAS, 2020): המנבאים הטובים ביותר לקשר טוב הם מאפיינים של הקשר עצמו, כמו תחושת היענות, תשוקה והערכה. החפיסה הזו עוסקת בצרכים, שנאמרים בעדינות."
+  },
   "reveal": {
     "name": { "ru": "Совпадения", "en": "Matches", "he": "התאמות" },
     "talk": {

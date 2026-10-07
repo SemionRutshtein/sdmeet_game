@@ -48,3 +48,12 @@ export function wishlistLabel(id) {
   const w = data.wishlist.find(x => x.id === id);
   return w ? loc(w.label) : id;
 }
+
+// Rough pace for time estimates: a closed question ~25s, an open one ~70s.
+export function minutesFor(decks) {
+  let sec = 0;
+  for (const d of decks) {
+    for (const q of d.stage1) sec += ['text', 'scene', 'wishlist'].includes(q.type) ? 70 : 25;
+  }
+  return Math.max(5, Math.round(sec / 60 / 5) * 5);
+}

@@ -3,6 +3,7 @@ import { t, loc } from '../i18n.js';
 import { publicApi, sessions } from '../api.js';
 import { C } from '../content.js';
 import { topbar } from './topbar.js';
+import { explainer } from './explainer.js';
 
 const form = { name: '', decks: null, adult: false };
 
@@ -10,6 +11,7 @@ export async function homeView(root, navigate) {
   const c = C();
   if (!form.decks) form.decks = new Set(c.decks.filter(d => d.defaultSelected).map(d => d.id));
   const err = h('p', { class: 'err hidden' });
+  const demo = explainer();
 
   function render() {
     const hasAdult = c.decks.some(d => d.adult && form.decks.has(d.id));
@@ -34,19 +36,21 @@ export async function homeView(root, navigate) {
     const mine = Object.entries(sessions.all()).sort((a, b) => (b[1].at || 0) - (a[1].at || 0));
     mount(root,
       topbar(),
-      h('div', { class: 'card' },
+      h('section', { class: 'card hero-card reveal-in' },
         h('div', { class: 'eyebrow' }, t('home.eyebrow')),
-        h('h1', {}, t('home.title')),
-        h('p', { class: 'muted' }, t('home.concept')),
-        h('ol', { class: 'small', style: { paddingInlineStart: '1.2rem', color: 'var(--text-2)' } },
-          [1, 2, 3, 4].map(n => h('li', {}, h('strong', {}, t(`stage${n}.title`)), ' — ', t(`home.step${n}`)))),
-        h('p', { class: 'small muted' }, t('home.notATest'))),
-      h('div', { class: 'card' },
+        h('h1', { class: 'display' }, t('home.title')),
+        h('p', { class: 'lead' }, t('home.concept')),
+        h('div', { class: 'row', style: { marginTop: '1.25rem' } },
+          h('a', { class: 'btn primary', href: '#create', onclick: e => { e.preventDefault(); document.getElementById('create')?.scrollIntoView({ behavior: 'smooth' }); setTimeout(() => name.focus({ preventScroll: true }), 400); } }, t('home.cta'), ' ↓'),
+          h('span', { class: 'chip' }, '✦ ', t('home.notATest')))),
+      h('section', { class: 'card demo-card reveal-in' }, demo),
+      h('section', { class: 'card reveal-in', id: 'create' },
+        h('h2', {}, t('home.createTitle')),
         h('label', { class: 'field' }, h('span', {}, t('home.yourName')), name),
-        h('div', { class: 'field' }, h('span', { class: 'tiny muted', style: { letterSpacing: '0.12em', textTransform: 'uppercase' } }, t('home.decks')),
+        h('div', { class: 'field' }, h('span', { class: 'field-label' }, t('home.decks')),
           c.decks.map(d => {
             const on = form.decks.has(d.id);
-            return h('label', { class: `check${on ? ' on' : ''}` },
+            return h('label', { class: `check deck-check${on ? ' on' : ''}` },
               h('input', { type: 'checkbox', checked: on, onchange: () => { on ? form.decks.delete(d.id) : form.decks.add(d.id); render(); } }),
               h('span', { class: 'deck-option' }, h('span', { class: 'deck-icon' }, d.icon),
                 h('span', {}, h('strong', {}, loc(d.title)), h('span', { class: 'small muted' }, loc(d.tagline)))));
@@ -67,5 +71,7 @@ export async function homeView(root, navigate) {
     );
   }
   render();
-  return () => {};
+  // entrance animations only on first paint, not when the form re-renders
+  const settle = setTimeout(() => root.classList.add('settled'), 900);
+  return () => { clearTimeout(settle); root.classList.remove('settled'); };
 }

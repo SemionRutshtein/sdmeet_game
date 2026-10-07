@@ -16,6 +16,11 @@
     "en": "Spot the \"mountains\" early and decide whether you're ready to live with them.",
     "he": "לזהות את ה\"הרים\" מוקדם ולהחליט אם אנחנו מוכנים לחיות איתם."
   },
+  "why": {
+    "ru": "Готтман обнаружил, что около 69% конфликтов в паре — вечные: они не исчезают до конца. Важно увидеть их рано и научиться о них говорить, а не «решить» их.",
+    "en": "Gottman found that about 69% of couple conflicts are perpetual: they never fully go away. What matters is seeing them early and learning to talk about them, not \"solving\" them.",
+    "he": "גוטמן מצא שכ־69% מהקונפליקטים בזוגיות הם נצחיים: הם לא נעלמים לגמרי. מה שחשוב הוא לזהות אותם מוקדם וללמוד לדבר עליהם, לא \"לפתור\" אותם."
+  },
   "reveal": {
     "name": { "ru": "Карта рельефа", "en": "Relief Map", "he": "מפת תבליט" },
     "talk": {
