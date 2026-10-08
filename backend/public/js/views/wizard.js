@@ -2,6 +2,7 @@
 // steps: [{ key, header, prompt, render(onChange) -> el, complete(value), save(value, pass) }]
 import { h, mount, toast } from '../dom.js';
 import { t } from '../i18n.js';
+import { transition } from '../motion.js';
 
 export function wizard({ steps, startAt = 0, finishLabel, onFinish, drafts, allowPass = true }) {
   const root = h('div', { class: 'wizard' });
@@ -12,10 +13,10 @@ export function wizard({ steps, startAt = 0, finishLabel, onFinish, drafts, allo
     const step = steps[i];
     let value = drafts.get(step.key)?.value;
     const isLast = i === steps.length - 1;
-    const next = h('button', { type: 'button', class: 'btn primary grow' }, isLast ? finishLabel : t('common.next'));
+    const next = h('button', { type: 'button', class: 'btn primary grow' }, isLast ? finishLabel : step.nextLabel || t('common.next'));
     const why = h('p', { class: 'why tiny', 'aria-live': 'polite' });
     const sync = () => {
-      next.disabled = busy || !step.complete(value);
+      next.disabled = busy || (!step.intro && !step.complete(value));
       const reason = !busy && next.disabled && step.why ? step.why(value) : null;
       why.textContent = reason ? t(reason.key, reason.params || {}) : '';
     };
@@ -27,14 +28,24 @@ export function wizard({ steps, startAt = 0, finishLabel, onFinish, drafts, allo
     sync();
 
     next.addEventListener('click', () => go(step, value, false, isLast));
-    const pass = allowPass ? h('button', { type: 'button', class: 'btn ghost', onclick: () => go(step, null, true, isLast) }, t('common.pass')) : null;
-    const back = h('button', { type: 'button', class: 'btn ghost', disabled: i === 0, onclick: () => { i--; render(); } }, t('common.back'));
+    const pass = allowPass && !step.intro ? h('button', { type: 'button', class: 'btn ghost', onclick: () => go(step, null, true, isLast) }, t('common.pass')) : null;
+    const back = h('button', { type: 'button', class: 'btn ghost', disabled: i === 0, onclick: () => { i--; transition(render); } }, t('common.back'));
 
     const saved = drafts.get(step.key);
+    // Counter and progress count questions only, not intro cards.
+    const qTotal = steps.filter(x => !x.intro).length;
+    const qNum = steps.slice(0, i + 1).filter(x => !x.intro).length;
+    if (step.intro) {
+      mount(root,
+        h('div', { class: 'card intro-card' },
+          input,
+          h('div', { class: 'wizard-nav' }, back, next)));
+      return;
+    }
     mount(root,
-      h('div', { class: 'card' },
-        h('div', { class: 'row between' }, step.header, h('span', { class: 'tiny muted' }, `${i + 1} / ${steps.length}`)),
-        h('div', { class: 'progress' }, h('div', { style: { width: `${((i + 1) / steps.length) * 100}%` } })),
+      h('div', { class: 'card question-card' },
+        h('div', { class: 'row between' }, step.header, h('span', { class: 'tiny muted counter-q' }, `${qNum} / ${qTotal}`)),
+        h('div', { class: 'progress' }, h('div', { style: { width: `${(qNum / qTotal) * 100}%` } })),
         h('div', { class: 'question-prompt' }, step.prompt),
         saved?.pass ? h('p', { class: 'pill' }, t('wizard.passedHere')) : null,
         input,
@@ -43,15 +54,17 @@ export function wizard({ steps, startAt = 0, finishLabel, onFinish, drafts, allo
         why
       )
     );
-    root.scrollIntoView?.({ block: 'start', behavior: 'smooth' });
   }
 
   async function go(step, value, pass, isLast) {
     if (busy) return;
     busy = true;
+    const from = i;
     try {
-      await step.save(value, pass);
-      drafts.set(step.key, { value: pass ? null : value, pass, saved: true });
+      if (!step.intro) {
+        await step.save(value, pass);
+        drafts.set(step.key, { value: pass ? null : value, pass, saved: true });
+      }
       if (isLast) await onFinish();
       else i++;
     } catch (e) {
@@ -62,15 +75,21 @@ export function wizard({ steps, startAt = 0, finishLabel, onFinish, drafts, allo
       }
     }
     busy = false;
-    if (root.isConnected) render();
+    if (!root.isConnected) return;
+    await transition(render);
+    if (i !== from) {
+      const top = root.getBoundingClientRect().top;
+      if (top < 0 || top > window.innerHeight * 0.4) root.scrollIntoView?.({ block: 'start', behavior: 'smooth' });
+    }
   }
 
   render();
   return root;
 }
 
-// First step without a saved answer, or 0
+// First question without a saved answer (or its deck intro), else the last step.
 export function firstOpen(steps, savedKeys) {
-  const j = steps.findIndex(s => !savedKeys.has(s.key));
-  return j < 0 ? steps.length - 1 : j;
+  const j = steps.findIndex(s => !s.intro && !savedKeys.has(s.key));
+  if (j < 0) return steps.length - 1;
+  return j > 0 && steps[j - 1].intro ? j - 1 : j;
 }

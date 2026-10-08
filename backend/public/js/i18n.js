@@ -7,6 +7,46 @@ export const LANGS = ['en', 'ru', 'he'];
 const STORAGE_KEY = 'sdmeet2.lang';
 
 const en = {
+  demo: {
+    eyebrow: 'How it works', nameA: 'Ana', nameB: 'Ben',
+    s1t: 'Draw your map', s1d: 'Answer questions about yourself, on your own time. Be honest: there are no right answers.',
+    s2t: 'Guess theirs', s2d: 'Predict how your partner answered about themselves. It is harder than it looks.',
+    s3t: 'Open together', s3d: 'On a call or on the couch, take turns flipping cards. See where you matched and where you missed.',
+    s4t: 'Keep what matters', s4d: 'Turn what you learned into your own rules, and seal a time capsule to open in a few months.',
+    guessQ: 'How did {name} answer?', sealed: 'Guess sealed', answered: '{name} answered', guessed: '{name} guessed',
+    rule: 'When one of us goes quiet, the other asks: "Now or later?"', capsule: 'Time capsule · opens in 6 months',
+    prev: 'Previous', next: 'Next', pause: 'Pause', play: 'Play', step: 'Step {n}', watch: 'Watch how it works'
+  },
+  brief: {
+    eyebrowNew: 'Your room is ready', eyebrowJoin: 'You are in', title: 'Before you start, {name}',
+    what: 'Two Maps is a guided conversation for two. You each describe yourself, then try to predict the other. The interesting part is not the score, it is the gaps.',
+    goalTitle: 'Your goal', goal: 'Finish knowing each other a little better than when you started, especially on the days that are not easy.',
+    journey: 'The four stages', solo: 'on your own', together: 'together', min: '~{n} min',
+    s1: 'Answer {q} questions about yourself.', s2: 'Choose 5–7 questions for your partner.',
+    s3: 'Answer their questions and predict their answers.', s4: 'Open the cards together, ideally on a video call or side by side.',
+    rulesTitle: 'House rules',
+    r1: 'Answer as you are, not as you want to be seen.', r2: 'Passing is always fine. Your partner only sees that you passed.',
+    r3: 'Your answers lock once your partner starts guessing, so finish stage 1 first.', r4: 'Nothing is graded. A miss is the most interesting part of the board.',
+    r5: 'Plan the reveal for a calm hour when you are both rested.',
+    inviteTitle: 'Invite your partner', inviteText: 'Send this link. They get the same briefing and can start whenever they like. You only need to be online together for the reveal.',
+    partnerJoined: '{name} has joined.', start: 'I am ready, let us start'
+  },
+  intro: {
+    deck: 'Deck {n} of {total}', why: 'Why this deck', meta: '{q} questions · ~{m} min', begin: 'Begin',
+    tip: 'Take a breath. Answer with the first honest thing that comes up.',
+    repliesTitle: 'Questions {name} chose for you', repliesText: 'Answer in your own words. A voice note is fine too. You will read these together during the reveal.',
+    guessTitle: 'Now switch perspective', guessText: 'Answer each question the way you think {name} answered it about themselves. Not the way you wish they would.'
+  },
+  agree: {
+    eyebrow: 'Stage 4 · Reveal', title: 'Before you open the cards', text: 'This works best on a call or side by side. Read these out loud to each other.',
+    a1: 'Listen to understand, not to answer.', a2: 'Ask before you explain: "What did you mean by that?"',
+    a3: 'A miss is not a failure. It is the most useful thing on the board.', a4: 'Either of you can say "pause" at any moment, no explanation needed.',
+    a5: 'No fixing tonight. Make something a rule only if you both want it.', cta: 'We agree, open the board'
+  },
+  after: {
+    title: 'Closing the circle', a1: 'Each say one thing you appreciated about the other in this conversation.',
+    a2: 'If something stung, name it and pick a time to come back to it.', a3: 'Take a breath and drink some water. This was real work.'
+  },
   why: {
     answerOrPass: 'Pick an answer, or tap Pass.', rank: '{k} of {n} chosen. Tap at least {n}.', custom: 'Write your own answer in the box.',
     slider: 'Move or tap the slider.', scene: 'Pick at least one feeling and one action.', wishlist: '{k} of {n} answered. Every item needs yes, maybe or no.',
@@ -29,7 +69,7 @@ const en = {
     yourName: 'Your name', namePlaceholder: 'How should your partner see you?',
     decks: 'Decks', decksNote: 'Two decks take about 20–30 minutes each.',
     adultConfirm: 'I\'m 18+ and want the Closer deck. It only stays on if my partner opts in too.',
-    create: 'Create a room', myRooms: 'Your rooms on this device', roomAs: 'As {name}',
+    create: 'Create a room', cta: 'Start a game', createTitle: 'Set up your room', myRooms: 'Your rooms on this device', roomAs: 'As {name}',
     privacy: 'Answers and voice notes are encrypted. Either of you can delete the room at any time. No shared stats between couples.'
   },
   join: {
@@ -153,7 +193,7 @@ const en = {
     now: '{deck}: answer again', guess: 'Now guess {name} again', waiting: 'Waiting for {name}…',
     compareTitle: '{deck}: then and now', then: 'then', nowCol: 'now', wishMatches: 'Shared wishes: {then} then, {now} now.'
   },
-  menu: { title: 'Room', myRooms: 'All my rooms', expires: 'This room is kept until {date} (extended with activity).' },
+  menu: { howTo: 'How to play', briefing: 'Room briefing', title: 'Room', myRooms: 'All my rooms', expires: 'This room is kept until {date} (extended with activity).' },
   danger: {
     title: 'Delete the room', text: 'Deletes every answer, voice note and the capsule for both of you. This can\'t be undone.',
     delete: 'Delete room', confirmTitle: 'Delete everything?', confirmText: 'All answers, threads, voice notes and the capsule will be gone for both of you.',
@@ -180,6 +220,46 @@ const en = {
 };
 
 const ru = {
+  demo: {
+    eyebrow: 'Как это работает', nameA: 'Аня', nameB: 'Бен',
+    s1t: 'Нарисуй свою карту', s1d: 'Отвечаешь на вопросы о себе, когда удобно. Честно: правильных ответов нет.',
+    s2t: 'Угадай карту партнёра', s2d: 'Угадываешь, как партнёр ответил о себе. Это сложнее, чем кажется.',
+    s3t: 'Откройте вместе', s3d: 'На звонке или рядом на диване открываете карточки по очереди и видите, где совпали, а где промахнулись.',
+    s4t: 'Сохраните главное', s4d: 'Превращаете понятое в ваши правила и запечатываете капсулу времени на несколько месяцев.',
+    guessQ: 'Как ответил(а) {name}?', sealed: 'Прогноз запечатан', answered: 'Ответ: {name}', guessed: 'Прогноз: {name}',
+    rule: 'Когда один замолкает, другой спрашивает: «Сейчас или позже?»', capsule: 'Капсула времени · откроется через 6 месяцев',
+    prev: 'Назад', next: 'Дальше', pause: 'Пауза', play: 'Смотреть', step: 'Шаг {n}', watch: 'Посмотреть, как это работает'
+  },
+  brief: {
+    eyebrowNew: 'Комната готова', eyebrowJoin: 'Ты в игре', title: 'Перед стартом, {name}',
+    what: 'Two Maps — это разговор на двоих с подсказками. Каждый описывает себя, а потом пытается предсказать другого. Интересен не счёт, а расхождения.',
+    goalTitle: 'Ваша цель', goal: 'Закончить, зная друг друга чуть лучше, чем в начале, особенно в непростые дни.',
+    journey: 'Четыре этапа', solo: 'в одиночку', together: 'вместе', min: '~{n} мин',
+    s1: 'Ответить на вопросы о себе ({q}).', s2: 'Выбрать 5–7 вопросов для партнёра.',
+    s3: 'Ответить на вопросы партнёра и угадать его ответы.', s4: 'Открыть карточки вместе, лучше на видеозвонке или рядом.',
+    rulesTitle: 'Правила игры',
+    r1: 'Отвечай как есть, а не как хочется выглядеть.', r2: 'Пас — это нормально. Партнёр увидит только, что был пас.',
+    r3: 'Ответы замораживаются, когда партнёр начинает угадывать, поэтому сначала закончи этап 1.', r4: 'Ничего не оценивается. Промах — самое интересное на доске.',
+    r5: 'Запланируйте reveal на спокойный час, когда оба отдохнули.',
+    inviteTitle: 'Пригласи партнёра', inviteText: 'Отправь эту ссылку. Партнёр увидит такой же инструктаж и сможет начать когда угодно. Быть онлайн одновременно нужно только на reveal.',
+    partnerJoined: '{name} уже в комнате.', start: 'Я готов(а), начинаем'
+  },
+  intro: {
+    deck: 'Колода {n} из {total}', why: 'Зачем эта колода', meta: 'Вопросов: {q} · ~{m} мин', begin: 'Начать',
+    tip: 'Сделай вдох. Отвечай первым честным, что приходит в голову.',
+    repliesTitle: 'Вопросы для тебя от: {name}', repliesText: 'Отвечай своими словами, можно голосовым. Вы прочитаете это вместе на reveal.',
+    guessTitle: 'Теперь поменяй точку зрения', guessText: 'Отвечай так, как, по-твоему, о себе ответил(а) {name}. Не так, как тебе хотелось бы.'
+  },
+  agree: {
+    eyebrow: 'Этап 4 · Reveal', title: 'Перед тем как открывать карточки', text: 'Лучше всего на звонке или рядом. Прочитайте это друг другу вслух.',
+    a1: 'Слушаем, чтобы понять, а не чтобы ответить.', a2: 'Сначала спрашиваем, потом объясняем: «Что ты имел(а) в виду?»',
+    a3: 'Промах — не провал. Это самое полезное на доске.', a4: 'Любой из вас может сказать «пауза» в любой момент, без объяснений.',
+    a5: 'Сегодня ничего не чиним. Правилом делаем только то, чего хотят оба.', cta: 'Договорились, открываем доску'
+  },
+  after: {
+    title: 'Завершение', a1: 'Скажите друг другу по одной вещи, которую вы оценили в этом разговоре.',
+    a2: 'Если что-то задело, назовите это и выберите время, чтобы к этому вернуться.', a3: 'Выдохните и выпейте воды. Это была настоящая работа.'
+  },
   why: {
     answerOrPass: 'Выбери ответ или нажми «Пас».', rank: 'Выбрано {k} из {n}. Нужно хотя бы {n}.', custom: 'Напиши свой вариант в поле.',
     slider: 'Сдвинь ползунок или нажми на него.', scene: 'Выбери хотя бы одно чувство и одно действие.', wishlist: 'Отвечено {k} из {n}. Для каждого пункта нужно «да», «может» или «нет».',
@@ -202,7 +282,7 @@ const ru = {
     yourName: 'Твоё имя', namePlaceholder: 'Как тебя увидит партнёр?',
     decks: 'Колоды', decksNote: 'Каждая колода — примерно 20–30 минут.',
     adultConfirm: 'Мне есть 18 и я хочу колоду «Ближе». Она останется, только если партнёр тоже согласится.',
-    create: 'Создать комнату', myRooms: 'Твои комнаты на этом устройстве', roomAs: 'Как {name}',
+    create: 'Создать комнату', cta: 'Начать игру', createTitle: 'Создай комнату', myRooms: 'Твои комнаты на этом устройстве', roomAs: 'Как {name}',
     privacy: 'Ответы и голосовые шифруются. Любой из вас может удалить комнату в любой момент. Никакой общей статистики между парами.'
   },
   join: {
@@ -326,7 +406,7 @@ const ru = {
     now: '{deck}: ответь заново', guess: 'Теперь снова угадай: {name}', waiting: 'Ждём: {name}…',
     compareTitle: '{deck}: тогда и сейчас', then: 'тогда', nowCol: 'сейчас', wishMatches: 'Общих желаний: тогда {then}, сейчас {now}.'
   },
-  menu: { title: 'Комната', myRooms: 'Все мои комнаты', expires: 'Комната хранится до {date} (продлевается при активности).' },
+  menu: { howTo: 'Как играть', briefing: 'Инструктаж', title: 'Комната', myRooms: 'Все мои комнаты', expires: 'Комната хранится до {date} (продлевается при активности).' },
   danger: {
     title: 'Удалить комнату', text: 'Удаляет все ответы, голосовые и капсулу для обоих. Отменить нельзя.',
     delete: 'Удалить комнату', confirmTitle: 'Удалить всё?', confirmText: 'Все ответы, треды, голосовые и капсула исчезнут для вас обоих.',
@@ -353,6 +433,46 @@ const ru = {
 };
 
 const he = {
+  demo: {
+    eyebrow: 'איך זה עובד', nameA: 'אנה', nameB: 'בן',
+    s1t: 'ציירו את המפה שלכם', s1d: 'עונים על שאלות על עצמכם, בזמן שנוח לכם. בכנות: אין תשובות נכונות.',
+    s2t: 'נחשו את של השני', s2d: 'מנחשים מה בן/בת הזוג ענו על עצמם. זה קשה יותר ממה שזה נראה.',
+    s3t: 'פותחים יחד', s3d: 'בשיחה או על הספה, הופכים קלפים בתורות ורואים איפה פגעתם ואיפה פספסתם.',
+    s4t: 'שומרים את מה שחשוב', s4d: 'הופכים את מה שלמדתם לכללים משלכם, וחותמים קפסולת זמן לפתיחה בעוד כמה חודשים.',
+    guessQ: 'מה {name} ענה/תה?', sealed: 'הניחוש נחתם', answered: 'התשובה של {name}', guessed: 'הניחוש של {name}',
+    rule: 'כשאחד מאיתנו שותק, השני שואל: "עכשיו או אחר כך?"', capsule: 'קפסולת זמן · תיפתח בעוד 6 חודשים',
+    prev: 'הקודם', next: 'הבא', pause: 'השהיה', play: 'הפעלה', step: 'שלב {n}', watch: 'לראות איך זה עובד'
+  },
+  brief: {
+    eyebrowNew: 'החדר מוכן', eyebrowJoin: 'נכנסת', title: 'לפני שמתחילים, {name}',
+    what: 'Two Maps היא שיחה מודרכת לשניים. כל אחד מתאר את עצמו ואז מנסה לחזות את השני. החלק המעניין הוא לא הניקוד, אלא הפערים.',
+    goalTitle: 'המטרה שלכם', goal: 'לסיים כשאתם מכירים זה את זה קצת יותר טוב מבהתחלה, במיוחד בימים הלא קלים.',
+    journey: 'ארבעת השלבים', solo: 'לבד', together: 'ביחד', min: '~{n} דק׳',
+    s1: 'לענות על {q} שאלות על עצמכם.', s2: 'לבחור 5–7 שאלות לבן/בת הזוג.',
+    s3: 'לענות על השאלות שלהם ולנחש את התשובות שלהם.', s4: 'לפתוח את הקלפים יחד, הכי טוב בשיחת וידאו או אחד ליד השני.',
+    rulesTitle: 'כללי הבית',
+    r1: 'ענו כמו שאתם, לא כמו שהייתם רוצים להיראות.', r2: 'מותר תמיד לדלג. בן/בת הזוג יראו רק שדילגתם.',
+    r3: 'התשובות ננעלות כשבן/בת הזוג מתחילים לנחש, אז סיימו קודם את שלב 1.', r4: 'שום דבר לא מקבל ציון. החטאה היא החלק הכי מעניין בלוח.',
+    r5: 'תכננו את החשיפה לשעה רגועה כששניכם נחים.',
+    inviteTitle: 'הזמינו את בן/בת הזוג', inviteText: 'שלחו את הקישור. גם הם יקבלו את ההסבר הזה ויוכלו להתחיל מתי שנוח. צריך להיות מחוברים יחד רק בחשיפה.',
+    partnerJoined: '{name} כבר בחדר.', start: 'אני מוכן/ה, מתחילים'
+  },
+  intro: {
+    deck: 'חפיסה {n} מתוך {total}', why: 'למה החפיסה הזו', meta: '{q} שאלות · ~{m} דק׳', begin: 'מתחילים',
+    tip: 'קחו נשימה. ענו עם הדבר הכן הראשון שעולה.',
+    repliesTitle: 'השאלות ש{name} בחר/ה בשבילך', repliesText: 'ענו במילים שלכם, אפשר גם בהודעה קולית. תקראו את זה יחד בחשיפה.',
+    guessTitle: 'עכשיו מחליפים נקודת מבט', guessText: 'ענו על כל שאלה כמו שלדעתכם {name} ענה/תה על עצמו/ה. לא כמו שהייתם רוצים.'
+  },
+  agree: {
+    eyebrow: 'שלב 4 · חשיפה', title: 'לפני שפותחים את הקלפים', text: 'זה עובד הכי טוב בשיחה או אחד ליד השני. הקריאו את זה זה לזה בקול.',
+    a1: 'מקשיבים כדי להבין, לא כדי לענות.', a2: 'קודם שואלים ואז מסבירים: "למה התכוונת?"',
+    a3: 'החטאה היא לא כישלון. זה הדבר הכי שימושי בלוח.', a4: 'כל אחד מכם יכול להגיד "הפסקה" בכל רגע, בלי הסברים.',
+    a5: 'הערב לא מתקנים. הופכים משהו לכלל רק אם שניכם רוצים.', cta: 'מסכימים, פותחים את הלוח'
+  },
+  after: {
+    title: 'סוגרים מעגל', a1: 'כל אחד אומר דבר אחד שהעריך אצל השני בשיחה הזו.',
+    a2: 'אם משהו כאב, אמרו את זה ובחרו זמן לחזור לזה.', a3: 'קחו נשימה ושתו מים. זו הייתה עבודה אמיתית.'
+  },
   why: {
     answerOrPass: 'בחרו תשובה או לחצו דלג.', rank: 'נבחרו {k} מתוך {n}. צריך לפחות {n}.', custom: 'כתבו את התשובה שלכם בתיבה.',
     slider: 'הזיזו את המחוון או לחצו עליו.', scene: 'בחרו לפחות רגש אחד ופעולה אחת.', wishlist: 'נענו {k} מתוך {n}. לכל פריט צריך כן, אולי או לא.',
@@ -375,7 +495,7 @@ const he = {
     yourName: 'השם שלך', namePlaceholder: 'איך בן/בת הזוג יראו אותך?',
     decks: 'חפיסות', decksNote: 'כל חפיסה לוקחת בערך 20–30 דקות.',
     adultConfirm: 'אני מעל גיל 18 ורוצה את החפיסה "קרובים יותר". היא תישאר רק אם גם בן/בת הזוג יסכימו.',
-    create: 'יצירת חדר', myRooms: 'החדרים שלך במכשיר הזה', roomAs: 'בתור {name}',
+    create: 'יצירת חדר', cta: 'להתחיל משחק', createTitle: 'הקמת החדר שלכם', myRooms: 'החדרים שלך במכשיר הזה', roomAs: 'בתור {name}',
     privacy: 'התשובות וההודעות הקוליות מוצפנות. כל אחד מכם יכול למחוק את החדר בכל רגע. אין סטטיסטיקה משותפת בין זוגות.'
   },
   join: {
@@ -499,7 +619,7 @@ const he = {
     now: '{deck}: לענות שוב', guess: 'עכשיו לנחש שוב את {name}', waiting: 'מחכים ל{name}…',
     compareTitle: '{deck}: אז ועכשיו', then: 'אז', nowCol: 'עכשיו', wishMatches: 'משאלות משותפות: אז {then}, עכשיו {now}.'
   },
-  menu: { title: 'חדר', myRooms: 'כל החדרים שלי', expires: 'החדר נשמר עד {date} (מתארך עם פעילות).' },
+  menu: { howTo: 'איך משחקים', briefing: 'הסבר על החדר', title: 'חדר', myRooms: 'כל החדרים שלי', expires: 'החדר נשמר עד {date} (מתארך עם פעילות).' },
   danger: {
     title: 'מחיקת החדר', text: 'מוחק את כל התשובות, ההודעות הקוליות והקפסולה לשניכם. אי אפשר לבטל.',
     delete: 'מחיקת החדר', confirmTitle: 'למחוק הכול?', confirmText: 'כל התשובות, השיחות, ההודעות הקוליות והקפסולה ייעלמו לשניכם.',

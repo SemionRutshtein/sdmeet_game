@@ -2,7 +2,7 @@
 // and the waiting screens between them.
 import { h, mount, toast, copyText } from '../dom.js';
 import { t, loc, APP_NAME } from '../i18n.js';
-import { decksIn, deck as deckOf, poolText, C } from '../content.js';
+import { decksIn, deck as deckOf, poolText, C, minutesFor } from '../content.js';
 import { questionInput, isComplete, whyIncomplete } from './inputs.js';
 import { wizard, firstOpen } from './wizard.js';
 import { voiceRecorder } from '../voice.js';
@@ -33,16 +33,46 @@ function labelBar(cur, onPick) {
 }
 
 // Own stage-1 answers. Also used for the capsule retake (kind = 'retake').
+function deckIntro(d, n, total) {
+  return {
+    key: `intro:${d.id}`,
+    intro: true,
+    nextLabel: t('intro.begin'),
+    render: () => h('div', { class: 'deck-intro' },
+      h('div', { class: 'deck-intro-icon', 'aria-hidden': 'true' }, d.icon),
+      h('div', { class: 'eyebrow' }, t('intro.deck', { n, total })),
+      h('h2', {}, loc(d.title)),
+      h('p', { class: 'lead' }, loc(d.tagline), ' ', loc(d.goal)),
+      d.why ? h('div', { class: 'why-box' }, h('div', { class: 'eyebrow' }, '🔬 ', t('intro.why')), h('p', {}, loc(d.why))) : null,
+      h('div', { class: 'deck-intro-meta' },
+        h('span', { class: 'chip' }, t('intro.meta', { q: d.stage1.length, m: minutesFor([d]) }))),
+      h('p', { class: 'small muted breath' }, t('intro.tip')))
+  };
+}
+
+function framingStep(key, icon, title, text) {
+  return {
+    key,
+    intro: true,
+    nextLabel: t('intro.begin'),
+    render: () => h('div', { class: 'deck-intro' },
+      h('div', { class: 'deck-intro-icon', 'aria-hidden': 'true' }, icon),
+      h('h2', {}, title),
+      h('p', { class: 'lead' }, text))
+  };
+}
+
 export function selfSteps({ deckIds, api, kind = 'self' }) {
   const steps = [];
-  for (const d of decksIn(deckIds)) {
-    d.stage1.forEach((q, idx) => {
+  const decks = decksIn(deckIds);
+  for (const [n, d] of decks.entries()) {
+    if (kind === 'self') steps.push(deckIntro(d, n + 1, decks.length));
+    d.stage1.forEach(q => {
       const key = `${d.id}:${q.id}`;
       steps.push({
         key,
         header: deckHeader(d),
         prompt: h('div', {},
-          idx === 0 && kind === 'self' ? h('p', { class: 'small muted', style: { fontFamily: 'var(--sans)' } }, loc(d.tagline), ' ', loc(d.goal)) : null,
           q.lock ? h('span', { class: 'pill gold', style: { marginInlineEnd: '0.5rem' } }, '🔒 ', t('lock.short')) : null,
           loc(q.prompt)),
         render(val, onChange) {
@@ -175,6 +205,9 @@ export function stage3View({ state, api, drafts, refresh, partnerName }) {
   seedDrafts(drafts, state.answers.reply, k => `reply:${k}`);
   seedDrafts(drafts, state.answers.guess, k => `guess:${k}`);
   const steps = [];
+  if (state.askedToMe.length) {
+    steps.push(framingStep('intro:replies', '✉️', t('intro.repliesTitle', { name: partnerName }), t('intro.repliesText')));
+  }
   for (const a of state.askedToMe) {
     const key = `reply:${a.id}`;
     const text = a.custom || poolText(a.deckId, a.poolId);
@@ -195,6 +228,9 @@ export function stage3View({ state, api, drafts, refresh, partnerName }) {
       why: () => ({ key: 'why.reply' }),
       save: (val, pass) => api.saveAnswer({ kind: 'reply', qkey: a.id, pass, value: pass ? undefined : val })
     });
+  }
+  if (decksIn(state.room.decks).some(d => d.stage1.some(q => q.predictable))) {
+    steps.push(framingStep('intro:guess', '🔮', t('intro.guessTitle'), t('intro.guessText', { name: partnerName })));
   }
   for (const d of decksIn(state.room.decks)) {
     for (const q of d.stage1.filter(x => x.predictable)) {
@@ -230,10 +266,10 @@ export function stage3View({ state, api, drafts, refresh, partnerName }) {
 
 // ---------- waiting ----------
 
-export function inviteBox(roomId) {
+export function inviteBox(roomId, { compact = false } = {}) {
   const url = `${location.origin}/join/${roomId}`;
-  return h('div', { class: 'banner' },
-    h('div', {}, t('invite.text')),
+  return h('div', { class: compact ? 'invite-compact' : 'banner' },
+    compact ? null : h('div', {}, t('invite.text')),
     h('div', { class: 'copy-box' }, h('code', {}, url),
       h('button', { class: 'btn ghost small', onclick: async () => { if (await copyText(url)) toast(t('common.copied')); } }, t('common.copy')),
       navigator.share ? h('button', { class: 'btn ghost small', onclick: () => navigator.share({ title: APP_NAME, text: t('invite.shareText'), url }).catch(() => {}) }, t('common.share')) : null));

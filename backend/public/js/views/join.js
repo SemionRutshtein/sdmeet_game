@@ -3,6 +3,7 @@ import { t, loc } from '../i18n.js';
 import { publicApi, sessions } from '../api.js';
 import { decksIn } from '../content.js';
 import { topbar } from './topbar.js';
+import { explainer } from './explainer.js';
 
 export async function joinView(root, roomId, navigate) {
   if (sessions.get(roomId)) {
@@ -23,6 +24,7 @@ export async function joinView(root, roomId, navigate) {
 
   let adult = false;
   let name = '';
+  const demo = explainer();
   const err = h('p', { class: 'err hidden' });
 
   function render() {
@@ -46,9 +48,9 @@ export async function joinView(root, roomId, navigate) {
     const adultDecks = decksIn(info.decks).filter(d => d.adult);
     mount(root,
       topbar(),
-      h('div', { class: 'card' },
+      h('section', { class: 'card hero-card reveal-in' },
         h('div', { class: 'eyebrow' }, t('home.eyebrow')),
-        h('h1', {}, t('join.title', { name: info.hostName })),
+        h('h1', { class: 'display' }, t('join.title', { name: info.hostName })),
         h('p', { class: 'muted' }, t('home.concept')),
         h('p', { class: 'small' }, t('join.decks'), ' ', normal.map(d => `${d.icon} ${loc(d.title)}`).join(' · ')),
         h('label', { class: 'field' }, h('span', {}, t('home.yourName')), input),
@@ -57,9 +59,12 @@ export async function joinView(root, roomId, navigate) {
           h('span', { class: 'small' }, t('join.adultOffer', { name: info.hostName, deck: loc(adultDecks[0].title) }))) : null,
         join,
         err),
+      h('section', { class: 'card demo-card reveal-in' }, demo),
       h('p', { class: 'tiny muted center' }, t('home.privacy'))
     );
   }
   render();
-  return () => {};
+  // entrance animations only on first paint, not when the form re-renders
+  const settle = setTimeout(() => root.classList.add('settled'), 900);
+  return () => { clearTimeout(settle); root.classList.remove('settled'); };
 }

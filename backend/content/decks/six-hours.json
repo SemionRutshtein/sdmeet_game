@@ -15,6 +15,11 @@
     "en": "See how each of us reacts when the connection drops.",
     "he": "לראות איך כל אחד מאיתנו מגיב כשהקשר נקטע."
   },
+  "why": {
+    "ru": "Вместо ярлыков привязанности — реальные моменты: когда связь рвётся, один часто тянется навстречу, а другой отходит. Увидев свой паттерн, проще договориться о сигнале.",
+    "en": "Real moments instead of attachment labels: when contact drops, one partner often reaches out while the other pulls back. Once you see your pattern, it is easier to agree on a signal.",
+    "he": "רגעים אמיתיים במקום תוויות של התקשרות: כשהקשר נקטע, לעיתים קרובות אחד מתקרב והשני מתרחק. כשרואים את הדפוס, קל יותר להסכים על סימן."
+  },
   "reveal": {
     "name": { "ru": "Раскадровка", "en": "Storyboard", "he": "סטוריבורד" },
     "talk": {

@@ -10,12 +10,15 @@ const STATUS_ICON = { discussed: '✓', later: '↺', rule: '★' };
 export function boardView(ctx) {
   const root = h('div');
   let lastOpened = null;
+  let justOpened = new Set();
 
   function render(state) {
     const board = state.board;
     const myTurn = board.turnSeat === state.me.seat;
     const opened = new Set(board.cards.filter(c => c.opened).map(c => c.key));
     // A card the partner just opened pops up here too: you look at it together.
+    // Only tiles opened since the last render get the flip animation.
+    justOpened = lastOpened ? new Set([...opened].filter(k => !lastOpened.has(k))) : new Set();
     if (lastOpened) {
       const fresh = board.cards.find(c => c.opened && !lastOpened.has(c.key) && c.openedBy !== state.me.seat);
       if (fresh && !ctx.sheetOpen()) ctx.openCard(fresh.key);
@@ -48,7 +51,7 @@ export function boardView(ctx) {
 
   function tile(c, n, state, myTurn) {
     if (c.opened) {
-      return h('button', { class: 'tile opened', onclick: () => ctx.openCard(c.key) },
+      return h('button', { class: `tile opened${justOpened.has(c.key) ? ' just-opened' : ''}`, onclick: () => ctx.openCard(c.key) },
         h('div', { class: 'tile-badges' },
           c.lock ? h('span', { class: 'pill gold' }, c.lockSeats.length >= 2 ? '🔓' : '🔒') : null,
           terrainPill(c.terrain),

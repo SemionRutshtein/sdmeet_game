@@ -39,6 +39,7 @@ const B = await newPlayer('B', { width: 390, height: 844 }); // phone
 step('A creates a room with all four decks (English)');
 await A.goto(BASE);
 await A.waitForSelector('text=Create a room');
+await A.waitForSelector('.demo .scene .phone'); // animated walkthrough on the home screen
 await shot(A, '01-home-en');
 await A.fill('input[autocomplete="given-name"]', 'Ana');
 for (const title of ['Six Hours of Silence', 'Closer (18+)']) await A.click(`label.check:has-text("${title}")`);
@@ -47,10 +48,13 @@ await A.click('button:has-text("Create a room")');
 await A.waitForURL(/\/room\//);
 const roomUrl = A.url();
 const roomId = roomUrl.split('/room/')[1];
+await A.waitForSelector('.journey'); // briefing before stage 1
 await A.waitForSelector('.copy-box code');
 const invite = await A.textContent('.copy-box code');
 assert.ok(invite.endsWith(`/join/${roomId}`));
-await shot(A, '02-stage1-start');
+await shot(A, '02-briefing');
+await A.click('.sticky-cta .btn');
+await A.waitForSelector('.wizard .deck-intro');
 
 // ---------- join in Hebrew ----------
 step('B opens the invite, switches to Hebrew, joins and opts into 18+');
@@ -62,6 +66,8 @@ await B.click('label.check');
 await shot(B, '03-join-he');
 await B.click('button.btn.primary');
 await B.waitForURL(/\/room\//);
+await B.waitForSelector('.journey');
+await B.click('.sticky-cta .btn');
 await B.waitForSelector('.wizard');
 
 // ---------- generic wizard filler ----------
@@ -110,7 +116,14 @@ async function runWizard(page, variant, { voiceOnFirstText = false, passEvery = 
   let n = 0;
   let didVoice = false;
   for (;;) {
-    const counter = await page.locator('.wizard .tiny.muted').first().textContent();
+    // deck intros / framing cards: read, then continue
+    if (await page.locator('.wizard .intro-card').count()) {
+      await page.click('.wizard .intro-card .btn.primary');
+      await page.waitForSelector('.wizard .question-card, .wizard .intro-card:not(:has(.btn.primary[disabled]))');
+      await page.waitForFunction(() => document.querySelector('.wizard .question-card'), null, { timeout: 5000 }).catch(() => {});
+      continue;
+    }
+    const counter = await page.locator('.wizard .counter-q').first().textContent();
     const [cur, total] = counter.split('/').map(s => parseInt(s.trim(), 10));
     if (passEvery && n > 0 && n % passEvery === 0 && cur < total) {
       await page.click('.wizard-nav button:nth-child(2)');
@@ -132,7 +145,7 @@ async function runWizard(page, variant, { voiceOnFirstText = false, passEvery = 
     }
     n++;
     if (cur === total) break;
-    await page.waitForFunction(prev => document.querySelector('.wizard .tiny.muted')?.textContent !== prev, counter);
+    await page.waitForFunction(prev => document.querySelector('.wizard .intro-card') || document.querySelector('.wizard .counter-q')?.textContent !== prev, counter);
   }
   return { didVoice };
 }
@@ -173,6 +186,10 @@ await runWizard(B, 0);
 
 // ---------- reveal ----------
 step('Reveal: take turns opening every card');
+for (const p of [A, B]) {
+  await p.waitForSelector('.agreements', { timeout: 15000 }); // spoken agreements before the board
+  await p.click('.sticky-cta .btn');
+}
 await A.waitForSelector('.board-grid', { timeout: 15000 });
 await B.waitForSelector('.board-grid', { timeout: 15000 });
 await shot(A, '08-board-en');

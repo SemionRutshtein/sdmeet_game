@@ -15,6 +15,11 @@
     "en": "So hard emotions become part of the map, not a glitch in the picture.",
     "he": "כדי שרגשות קשים יהיו חלק מהמפה, ולא תקלה בתמונה."
   },
+  "why": {
+    "ru": "Исследования Готтмана о «мета-эмоциях»: пары справляются лучше, когда знают, как каждый относится к своим чувствам — злости, грусти, страху, — а не только к хорошим дням.",
+    "en": "Gottman's research on \"meta-emotion\": couples do better when they know how each of them relates to feelings like anger, sadness and fear, not only how they are on good days.",
+    "he": "המחקר של גוטמן על \"מטא־רגש\": זוגות מתמודדים טוב יותר כשהם יודעים איך כל אחד מתייחס לרגשות כמו כעס, עצב ופחד, ולא רק איך הוא בימים הטובים."
+  },
   "reveal": {
     "name": { "ru": "Прогноз погоды", "en": "Weather Forecast", "he": "תחזית מזג האוויר" },
     "talk": {
