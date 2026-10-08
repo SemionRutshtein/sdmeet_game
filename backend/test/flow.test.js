@@ -208,9 +208,12 @@ test('full game: stages, freeze, reveal board, locks, threads, voice, summary, e
   assert.equal(values.terrain, 'mountain');
   assert.equal(values.talk.ref, 'talkMountain');
 
-  // deck 3: shut-down vs call is the chase pattern
+  // deck 3: shut-down vs call is the chase pattern; the scene brings its own talk prompt
   const scene = (await a.get('/api/cards/s%3Asix-hours%3Ano-reply')).data;
   assert.equal(scene.questions[0].pattern, 'chase');
+  assert.deepEqual(scene.talk, { deck: 'six-hours', qid: 'no-reply', ref: 'qtalk' });
+  assert.ok(scene.conclusions.some(c => c.code === 'scene_need_clash'));
+  assert.ok(scene.questions[0].guesses[1].checks.length === 3);
 
   // wishlist: only the overlap, never the raw answers
   const wish = (await b.get('/api/cards/s%3Acloser%3Awishlist')).data;
@@ -271,6 +274,8 @@ test('full game: stages, freeze, reveal board, locks, threads, voice, summary, e
   assert.equal(ng.bySeat[1].hits, ng.bySeat[1].total);
   assert.ok(sum.relief.mountain >= 1);
   assert.ok(sum.storyboard.chase >= 1);
+  assert.equal(sum.storyboard.sameStory, 0);
+  assert.deepEqual([sum.storyboard.needs[1], sum.storyboard.needs[2]].sort(), ['reassure', 'time']);
   assert.ok(sum.climate[1] && sum.climate[2]);
   assert.ok(!sum.accuracy.some(x => x.deck === 'closer'));
 

@@ -24,7 +24,7 @@ function sources(dir) {
 // Keys built at runtime from codes the server sends.
 const DYNAMIC = {
   'concl.': ['passed', 'same', 'differ', 'apart_points', 'apart_percent', 'multi_shared', 'rank_shared', 'rank_top_same',
-    'rank_top_differ', 'scene_same_do', 'guess_both', 'guess_none', 'guess_one', 'read_forecast', 'terrain_valley',
+    'rank_top_differ', 'scene_same_do', 'scene_same_story', 'scene_same_need', 'scene_need_clash', 'scene_shake_gap', 'guess_both', 'guess_none', 'guess_one', 'read_forecast', 'terrain_valley',
     'terrain_hill', 'terrain_mountain', 'chase', 'wish_matches', 'wish_none'],
   'error.': ['generic', 'network', 'not_found', 'unauthorized', 'name_required', 'decks_required', 'adult_confirm_required',
     'room_full', 'bad_value', 'wrong_stage', 'frozen', 'incomplete', 'ask_count', 'not_your_turn', 'not_openable',
@@ -33,7 +33,7 @@ const DYNAMIC = {
   'status.': ['discussed', 'later', 'rule'],
   'statusBadge.': ['discussed', 'later', 'rule'],
   'terrain.': ['valley', 'hill', 'mountain'],
-  'scene.': ['feel', 'do'],
+  'scene.': ['story', 'do', 'need'],
   'wish.': ['yes', 'maybe', 'no'],
   'home.step': ['1', '2', '3', '4'],
   'stage': ['1.title', '2.title', '3.title', '4.title', '1.intro', '2.intro', '3.intro'],

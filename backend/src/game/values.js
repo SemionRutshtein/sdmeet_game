@@ -98,14 +98,8 @@ function normalizeSelf(q, deck, value, { wishlistIds } = {}) {
         icon: pickOne(q.options, value.icon),
         phrase: cleanText(value.phrase, q.maxLength || 120)
       };
-    case 'scene': {
-      const f = deck.sceneFields;
-      return {
-        feel: pickMany(f.feel.options, value.feel),
-        do: pickOne(f.do.options, value.do),
-        want: cleanText(value.want, f.want.maxLength || 140)
-      };
-    }
+    case 'scene':
+      return sceneValue(deck.sceneFields, value, () => true);
     case 'wishlist': {
       const items = value.items;
       if (!items || typeof items !== 'object') throw bad();
@@ -136,13 +130,30 @@ function normalizeGuess(q, deck, value) {
       return { value: intInRange(value.value, q.min, q.max) };
     case 'weather':
       return { icon: pickOne(q.options, value.icon) };
-    case 'scene': {
-      const f = deck.sceneFields;
-      return { feel: pickMany(f.feel.options, value.feel), do: pickOne(f.do.options, value.do) };
-    }
+    case 'scene':
+      return sceneValue(deck.sceneFields, value, f => f.guess);
     default:
       throw bad();
   }
+}
+
+// One scene answer: every field the filter keeps. Text is optional, the rest required.
+function sceneValue(fields, value, keep) {
+  const out = {};
+  for (const [key, f] of Object.entries(fields)) {
+    if (!keep(f)) continue;
+    const v = value[key];
+    if (f.type === 'scale') out[key] = intInRange(v, f.min, f.max);
+    else if (f.type === 'choice') out[key] = pickOne(f.options, v);
+    else if (f.type === 'multi') {
+      out[key] = pickMany(f.options, v);
+      if (f.max && out[key].length > f.max) throw bad();
+    } else if (f.type === 'text') {
+      const text = cleanText(v, f.maxLength || 160);
+      if (text) out[key] = text;
+    }
+  }
+  return out;
 }
 
 function normalizeReply(value) {

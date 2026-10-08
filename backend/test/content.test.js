@@ -7,7 +7,7 @@ test('shipped content is valid in en/ru/he', () => {
   assert.equal(c.decks.length, 4);
   // design doc: deck 1 has 9 stage-1 questions and 10 pool questions, etc.
   const counts = Object.fromEntries(c.decks.map(d => [d.id, [d.stage1.length, d.pool.length]]));
-  assert.deepEqual(counts, { 'no-gloss': [9, 10], perpetual: [12, 10], 'six-hours': [8, 7], closer: [8, 7] });
+  assert.deepEqual(counts, { 'no-gloss': [9, 10], perpetual: [12, 10], 'six-hours': [8, 12], closer: [8, 7] });
   assert.ok(c.decks.find(d => d.id === 'closer').pool.every(p => p.lock), 'all deck-4 pool questions are locked');
   assert.ok(c.decks.find(d => d.id === 'no-gloss').stage1.filter(q => q.id !== 'first-impression').every(q => q.predictable));
 });

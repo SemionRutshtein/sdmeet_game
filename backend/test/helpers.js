@@ -68,12 +68,11 @@ function sampleSelf(q, deck, wishlist, variant = 0) {
     case 'slider': return { value: variant ? 90 : 10 };
     case 'text': return { text: `answer ${variant}` };
     case 'weather': return { icon: opt(0), phrase: 'grey and quiet' };
-    case 'scene': {
-      const f = deck.sceneFields;
+    case 'scene':
+      // variant 1 reaches out, variant 0 pulls back
       return variant
-        ? { feel: ['anxiety', 'fear'], do: 'call', want: 'reply soon' }
-        : { feel: ['relief'], do: 'shut-down', want: 'space' };
-    }
+        ? { shake: 5, story: 'not-priority', feel: ['anxiety', 'fear'], do: 'call', need: 'reassure', want: 'reply soon' }
+        : { shake: 2, story: 'their-right', feel: ['cold', 'hurt'], do: 'shut-down', need: 'time', want: 'space' };
     case 'wishlist': {
       const items = {};
       wishlist.forEach((w, i) => { items[w.id] = ['yes', 'maybe', 'no'][(i + variant) % 3]; });
@@ -91,7 +90,7 @@ function sampleGuess(q, deck, actual) {
     case 'multi': return { options: actual.options };
     case 'scale': return { value: actual.value };
     case 'weather': return { icon: actual.icon };
-    case 'scene': return { feel: actual.feel, do: actual.do };
+    case 'scene': return { story: actual.story, do: actual.do, need: actual.need };
   }
   throw new Error(`no guess for ${q.type}`);
 }

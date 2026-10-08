@@ -38,15 +38,25 @@ so it must already be complete.
 | multi | a set | Jaccard ≥ 0.5 |
 | scale 1–7 | a value | off by ≤ 1 |
 | weather | the icon | same icon (the phrase is not guessed) |
-| scene (deck 3) | feelings + action | scored as two checks: feelings (Jaccard ≥ 0.5) and action (same) |
+| scene (deck 3) | every scene field marked `guess: true` (story, action, need) | one check per field: same option (choice), Jaccard ≥ 0.5 (multi), ≤ 1 apart (scale). Answers saved before a field existed skip that check |
 
 Deck 2 and deck 4 have no predictable questions (the design doesn't mark them), so they have no accuracy score.
 
 **Deck 2 terrain.** "Same" means: same option (choice), Jaccard ≥ 0.5 (multi), ≤ 1 apart (scale), ≤ 20 apart (slider), 4+ of top-5 overlap (rank).
 Same → valley. Different and at least one "non-negotiable" → mountain. Any other difference → hill. If someone passed there is no terrain.
 
-**Deck 3 seek/withdraw.** Weights sit on each option in `six-hours.json` (`w: [seek, withdraw]`). A scene is highlighted when one
-person's net score is ≥ 2 toward seeking and the other's is ≥ 1 toward withdrawing. Neither the axes nor the numbers ever reach the client.
+**Deck 3 scene fields.** `sceneFields` in `six-hours.json` is an ordered map of fields answered for every scene: `shake` (scale 1–5),
+`story` (choice), `feel` (multi, max 4, options split into `surface` / `under` layers, after EFT's reactive vs. primary emotions),
+`do` (choice), `need` (choice) and `want` (optional text). Everything but text is required. Scenes have an optional `detail` line
+shown under the prompt and their own `talk` prompt for the reveal.
+
+**Deck 3 seek/withdraw.** Weights sit on each choice/multi option (`w: [seek, withdraw]`) and are summed over all fields. A scene is
+highlighted when one person's net score is ≥ 3 toward seeking and the other's is ≥ 2 toward withdrawing. Neither the axes nor the
+numbers ever reach the client. A scene card also says when you'd tell yourselves the same story, need the same thing, need opposite
+things (closeness vs. room), or when it hits one of you ≥ 2 points harder.
+
+**My answers export.** Client-only (`views/myAnswers.js`): it reads the player's own `state.answers` and the questions they were
+asked/asked, and renders Markdown or JSON. No new endpoint, nothing about the partner beyond their name.
 
 **Board order.** Cards go by deck. Deck 1 opens with the "climate" card (questions 2, 3, 4, 7, 9 merged). Deck 2 mountains and every
 locked card (deck 4 Q6/Q7, all deck 4 pool questions, custom questions marked locked) wait until every other card is open.

@@ -2,10 +2,11 @@
 // PDF export (both must agree), the capsule and room deletion.
 import { h, mount, toast } from '../dom.js';
 import { t, loc } from '../i18n.js';
-import { deck as deckOf, weatherIcon } from '../content.js';
+import { deck as deckOf, weatherIcon, optionLabel } from '../content.js';
 import { drawShareImage } from '../share.js';
 import { capsuleSection } from './capsule.js';
 import { cardTitle } from './format.js';
+import { myAnswersSheet } from './myAnswers.js';
 
 export function mapView(ctx) {
   const root = h('div');
@@ -42,6 +43,18 @@ export function mapView(ctx) {
         class: `btn small ${mine ? 'primary' : 'ghost'}`,
         onclick: async () => { await ctx.api.consent(type, !mine); ctx.refresh(); }
       }, mine ? t('consent.agreed') : t('consent.agree')));
+  }
+
+  function storyboard(state, sb) {
+    const six = deckOf('six-hours');
+    const need = six.sceneFields.need;
+    return h('div', { class: 'card' }, h('h3', {}, six.icon, ' ', loc(six.reveal.name)),
+      h('p', { class: 'small' }, t('map.storyboard', { n: sb.chase, total: sb.total })),
+      sb.sameStory != null ? h('p', { class: 'small' }, t('map.storyboardStory', { n: sb.sameStory, total: sb.total })) : null,
+      need && sb.needs ? [state.me.seat, state.partner.seat].filter(seat => sb.needs[seat]).map(seat =>
+        h('div', { class: 'rule-item' },
+          h('div', { class: 'tiny muted' }, t('map.storyboardNeed', { name: nameOf(state, seat) })),
+          optionLabel(need.options, sb.needs[seat]))) : null);
   }
 
   function draw(state) {
@@ -84,8 +97,7 @@ export function mapView(ctx) {
           h('div', {}, h('div', { class: 'n' }, `🌿 ${s.relief.valley}`), h('div', { class: 'tiny muted' }, t('terrain.valley'))),
           h('div', {}, h('div', { class: 'n' }, `⛰ ${s.relief.hill}`), h('div', { class: 'tiny muted' }, t('terrain.hill'))),
           h('div', {}, h('div', { class: 'n' }, `🏔️ ${s.relief.mountain}`), h('div', { class: 'tiny muted' }, t('terrain.mountain'))))) : null,
-      s.storyboard ? h('div', { class: 'card' }, h('h3', {}, loc(deckOf('six-hours').reveal.name)),
-        h('p', { class: 'small' }, t('map.storyboard', { n: s.storyboard.chase, total: s.storyboard.total }))) : null,
+      s.storyboard ? storyboard(state, s.storyboard) : null,
       h('div', { class: 'card' }, h('h3', {}, '★ ', t('map.rules')),
         s.rules.length
           ? s.rules.map(r => h('div', { class: 'rule-item' },
@@ -112,6 +124,9 @@ export function mapView(ctx) {
       s.cardsOpened === s.cardsTotal ? h('div', { class: 'card aftercare' },
         h('h3', {}, '🕯️ ', t('after.title')),
         h('ol', { class: 'agreements' }, [1, 2, 3].map(n => h('li', { style: { '--i': n } }, t(`after.a${n}`))))) : null,
+      h('div', { class: 'card' }, h('h3', {}, '📝 ', t('mine.title')),
+        h('p', { class: 'small muted' }, t('mine.cardText')),
+        h('button', { class: 'btn ghost', onclick: () => myAnswersSheet(ctx.state()) }, t('mine.open'))),
       capsule.el,
       h('div', { class: 'card' }, h('h3', {}, t('danger.title')),
         h('p', { class: 'small muted' }, t('danger.text')),

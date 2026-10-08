@@ -23,13 +23,15 @@ A room has two players and 1–4 decks (default: *No Gloss* + *69%*).
 
 Before stage 1 each player gets a short briefing (goal, stages with timings, house rules); each deck opens with an intro card explaining what it explores and the research behind it; the reveal starts with five spoken agreements and "Our map" ends with a short closing ritual. The home and invite pages have an animated walkthrough of the whole game.
 
+Any time during the game, **My answers** (room menu, and a card on Our map) gives a player their own answers as Markdown or JSON — copy or download — with an optional note for an AI assistant or therapist. It's built in the browser from that player's own state; the partner's answers are never included, and the 18+ deck is opt-in.
+
 After that comes **Our map** (accuracy, climate, relief, rules, share image, PDF export) and the **time capsule**, which opens in 3, 6 or 12 months and offers a retake for "then / now".
 
 | Deck | Reveal | Notes |
 |---|---|---|
 | No Gloss | Weather Forecast | All predictable. A "climate" card per person. |
 | 69% | Relief Map | Each answer gets a label: negotiable / important / non-negotiable. Valleys, hills, mountains. Mountains open last. |
-| Six Hours of Silence | Storyboard | Situations, not attachment types. Hidden seek/withdraw weights highlight the "one reaches out, the other pulls back" pattern. |
+| Six Hours of Silence | Storyboard | Eight vivid scenes, each answered as a chain: how hard it hits → the story I'd tell myself → feelings on the surface and underneath → what I'd do → what would actually help. Partners guess the story, the action and the need. Hidden seek/withdraw weights highlight the "one reaches out, the other pulls back" pattern; each scene has its own talk prompt and a "When …, I'll … and you'll …" rule template. |
 | Closer (18+) | Matches | On only if both opt in. Double-locked questions. The wishlist only ever shows shared yes/maybe. |
 
 ## Privacy

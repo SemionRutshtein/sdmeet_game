@@ -14,6 +14,20 @@ test('choice with custom option needs text', () => {
   throwsBad(() => self('no-gloss', 'anger', { option: 'nope' }));
 });
 
+test('scene: every field but the free text is required, feelings capped, guesses cover only guessable fields', () => {
+  const full = { shake: 4, story: 'busy', feel: ['anger', 'fear'], do: 'call', need: 'voice', want: '  call me  ' };
+  assert.deepEqual(self('six-hours', 'no-reply', full), { ...full, want: 'call me' });
+  const { want, ...noText } = full;
+  assert.deepEqual(self('six-hours', 'no-reply', noText), noText);
+  throwsBad(() => self('six-hours', 'no-reply', { ...full, need: undefined }));
+  throwsBad(() => self('six-hours', 'no-reply', { ...full, shake: 6 }));
+  throwsBad(() => self('six-hours', 'no-reply', { ...full, feel: ['anger', 'fear', 'hurt', 'lonely', 'shame'] }));
+  throwsBad(() => self('six-hours', 'no-reply', { ...full, feel: ['nothing', 'fear'] }));
+  const guess = V.normalizeGuess(q('six-hours', 'no-reply'), deck('six-hours'), full);
+  assert.deepEqual(guess, { story: 'busy', do: 'call', need: 'voice' });
+  throwsBad(() => V.normalizeGuess(q('six-hours', 'no-reply'), deck('six-hours'), { story: 'busy', do: 'call' }));
+});
+
 test('rank must be a full permutation (or exactly top-N)', () => {
   throwsBad(() => self('no-gloss', 'bad-day-needs', { order: ['hug'] }));
   throwsBad(() => self('perpetual', 'values', { order: ['freedom', 'freedom', 'family', 'calm', 'care'] }));

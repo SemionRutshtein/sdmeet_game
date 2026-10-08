@@ -47,6 +47,19 @@ function toggleMulti(options, current, id) {
   return [...current.filter(x => !options.find(o => o.id === x)?.exclusive), id];
 }
 
+// Scene fields in display order. A guess covers only the guessable ones;
+// the free-text field is optional.
+export function sceneFieldsFor(deck, mode) {
+  return Object.entries(deck.sceneFields).filter(([, f]) => (mode === 'guess' ? f.guess : true));
+}
+
+function sceneFieldDone(f, val) {
+  if (f.type === 'text') return true;
+  if (f.type === 'multi') return Array.isArray(val) && val.length > 0;
+  if (f.type === 'scale') return Number.isInteger(val);
+  return !!val;
+}
+
 // Mirrors rankRange() in src/game/values.js
 export function rankRange(q) {
   if (q.pick) return { min: q.pick, max: q.pick };
@@ -67,7 +80,10 @@ export function whyIncomplete(q, deck, value, mode) {
       if (v.option && mode === 'self') return { key: 'why.custom' };
       break;
     case 'slider': return { key: 'why.slider' };
-    case 'scene': return { key: 'why.scene' };
+    case 'scene': {
+      const [, f] = sceneFieldsFor(deck, mode).find(([key, fl]) => !sceneFieldDone(fl, v[key])) || [];
+      return f ? { key: 'why.scene', params: { field: loc(f.prompt) } } : null;
+    }
     case 'wishlist': {
       const total = C().wishlist.length;
       const done = C().wishlist.filter(w => v.items?.[w.id]).length;
@@ -96,7 +112,7 @@ export function isComplete(q, deck, value, mode) {
     case 'slider': return Number.isInteger(v.value);
     case 'text': return !!(v.text?.trim() || v.voiceId);
     case 'weather': return !!v.icon;
-    case 'scene': return !!(v.feel?.length && v.do);
+    case 'scene': return sceneFieldsFor(deck, mode).every(([key, f]) => sceneFieldDone(f, v[key]));
     case 'wishlist': return C().wishlist.every(w => v.items?.[w.id]);
     default: return false;
   }
@@ -218,17 +234,12 @@ export function questionInput({ q, deck, value, mode, onChange, api, voiceContex
             textBox({ value: v.phrase, max: q.maxLength || 120, single: true, placeholder: t('input.weatherPlaceholder'), onInput: phrase => quiet({ phrase }) })
           ) : null
         );
-      case 'scene': {
-        const f = deck.sceneFields;
-        return mount(root,
-          h('div', { class: 'sub-q' }, h('div', { class: 'label' }, loc(f.feel.prompt)),
-            chipList(f.feel.options, v.feel || [], id => set({ feel: toggleMulti(f.feel.options, v.feel || [], id) }))),
-          h('div', { class: 'sub-q' }, h('div', { class: 'label' }, loc(f.do.prompt)),
-            choiceList(f.do.options, v.do, id => set({ do: id }))),
-          mode === 'self' ? h('div', { class: 'sub-q' }, h('div', { class: 'label' }, loc(f.want.prompt)),
-            textBox({ value: v.want, max: f.want.maxLength || 140, single: true, placeholder: t('input.oneLine'), onInput: want => quiet({ want }) })) : null
-        );
-      }
+      case 'scene':
+        return mount(root, h('ol', { class: 'scene-beats' }, sceneFieldsFor(deck, mode).map(([key, f]) =>
+          h('li', { class: 'beat' },
+            h('div', { class: 'label' }, loc(f.prompt), f.type === 'text' ? [' ', h('span', { class: 'muted' }, t('input.optional'))] : null),
+            f.hint && mode === 'self' ? h('p', { class: 'muted tiny beat-hint' }, loc(f.hint)) : null,
+            sceneField(key, f)))));
       case 'wishlist': {
         const items = v.items || {};
         return mount(root,
@@ -246,6 +257,36 @@ export function questionInput({ q, deck, value, mode, onChange, api, voiceContex
       default:
         return mount(root, h('p', { class: 'err' }, q.type));
     }
+  }
+
+  function sceneField(key, f) {
+    const cur = v[key];
+    if (f.type === 'scale') {
+      const nums = [];
+      for (let n = f.min; n <= f.max; n++) nums.push(n);
+      return h('div', {},
+        h('div', { class: 'scale' }, nums.map(n => h('button', {
+          type: 'button', class: 'opt', 'aria-pressed': String(cur === n), onclick: () => set({ [key]: n })
+        }, String(n)))),
+        h('div', { class: 'scale-ends' }, h('span', {}, loc(f.low)), h('span', {}, loc(f.high))));
+    }
+    if (f.type === 'choice') return choiceList(f.options, cur, id => set({ [key]: id }));
+    if (f.type === 'multi') {
+      const picked = cur || [];
+      const toggle = id => {
+        const next = toggleMulti(f.options, picked, id);
+        if (f.max && next.length > f.max) return;
+        set({ [key]: next });
+      };
+      if (!f.layers) return chipList(f.options, picked, toggle);
+      // Layered feelings: what shows on the surface, what sits underneath.
+      return h('div', { class: 'layers' }, Object.entries(f.layers).map(([layer, title]) =>
+        h('div', { class: `layer layer-${layer}` },
+          h('div', { class: 'tiny muted layer-title' }, loc(title)),
+          chipList(f.options.filter(o => o.layer === layer), picked, toggle))),
+        f.max ? h('div', { class: 'tiny muted' }, t('input.pickedOf', { k: picked.length, n: f.max })) : null);
+    }
+    return textBox({ value: cur, max: f.maxLength || 160, single: true, placeholder: t('input.oneLine'), onInput: text => quiet({ [key]: text }) });
   }
 
   render();

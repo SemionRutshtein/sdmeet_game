@@ -19,8 +19,14 @@ function intersection(a, b) {
   return a.filter(x => B.has(x));
 }
 
-// Is a guess right? Returns one check per scored part (scenes have two).
-function checkGuess(q, actual, guess) {
+function sceneFieldHit(f, actual, guess) {
+  if (f.type === 'multi') return jaccard(actual, guess) >= JACCARD_SAME;
+  if (f.type === 'scale') return Math.abs(actual - guess) <= SCALE_CLOSE;
+  return actual === guess;
+}
+
+// Is a guess right? Returns one check per scored part (a scene has one per guessable field).
+function checkGuess(q, actual, guess, deck) {
   switch (q.type) {
     case 'choice':
       return [{ part: 'main', hit: actual.option === guess.option }];
@@ -33,10 +39,10 @@ function checkGuess(q, actual, guess) {
     case 'weather':
       return [{ part: 'main', hit: actual.icon === guess.icon }];
     case 'scene':
-      return [
-        { part: 'feel', hit: jaccard(actual.feel, guess.feel) >= JACCARD_SAME },
-        { part: 'do', hit: actual.do === guess.do }
-      ];
+      // Answers saved before a field existed simply don't score on it.
+      return Object.entries(deck.sceneFields)
+        .filter(([key, f]) => f.guess && actual[key] != null && guess[key] != null)
+        .map(([key, f]) => ({ part: key, hit: sceneFieldHit(f, actual[key], guess[key]) }));
     default:
       return [];
   }
@@ -68,8 +74,11 @@ function compareAnswers(q, a, b) {
       const distance = Math.abs(a.value - b.value);
       return { same: distance <= SLIDER_CLOSE, distance };
     }
-    case 'scene':
-      return { same: a.do === b.do && jaccard(a.feel, b.feel) >= JACCARD_SAME, sameDo: a.do === b.do };
+    case 'scene': {
+      const sameStory = a.story != null && a.story === b.story;
+      const sameDo = a.do === b.do;
+      return { same: sameDo && (sameStory || jaccard(a.feel || [], b.feel || []) >= JACCARD_SAME), sameDo, sameStory };
+    }
     default:
       return null;
   }
@@ -83,25 +92,49 @@ function terrain(cmp, labelA, labelB) {
   return 'hill';
 }
 
-// Deck 3: net lean of one scene answer. > 0 seeks contact, < 0 withdraws.
+// Deck 3: net lean of one scene answer, summed over every weighted field.
+// > 0 seeks contact, < 0 withdraws.
 function sceneLean(deck, value) {
-  const { feel, do: doField } = deck.sceneFields;
-  let seek = 0;
-  let withdraw = 0;
-  for (const id of value.feel) {
-    const o = feel.options.find(x => x.id === id);
-    if (o) { seek += o.w[0]; withdraw += o.w[1]; }
+  let lean = 0;
+  for (const [key, f] of Object.entries(deck.sceneFields)) {
+    if (!f.options || value[key] == null) continue;
+    const ids = Array.isArray(value[key]) ? value[key] : [value[key]];
+    for (const id of ids) {
+      const o = f.options.find(x => x.id === id);
+      if (o) lean += o.w[0] - o.w[1];
+    }
   }
-  const d = doField.options.find(x => x.id === value.do);
-  if (d) { seek += d.w[0]; withdraw += d.w[1]; }
-  return seek - withdraw;
+  return lean;
 }
 
 // One reaches out, the other pulls back.
+const CHASE_SEEK = 3;
+const CHASE_WITHDRAW = -2;
 function chasePattern(deck, a, b) {
   const la = sceneLean(deck, a);
   const lb = sceneLean(deck, b);
-  return (la >= 2 && lb <= -1) || (lb >= 2 && la <= -1);
+  return (la >= CHASE_SEEK && lb <= CHASE_WITHDRAW) || (lb >= CHASE_SEEK && la <= CHASE_WITHDRAW);
+}
+
+// What a scene card says beyond "same / different". Seats are 1 and 2.
+const SHAKE_GAP = 2;
+function sceneInsights(deck, a, b) {
+  const out = [];
+  if (a.story != null && a.story === b.story) out.push({ code: 'scene_same_story' });
+  else if (a.do === b.do) out.push({ code: 'scene_same_do' });
+  const need = deck.sceneFields.need;
+  if (need && a.need != null && b.need != null) {
+    if (a.need === b.need) out.push({ code: 'scene_same_need' });
+    else {
+      const lean = id => { const o = need.options.find(x => x.id === id); return o ? o.w[0] - o.w[1] : 0; };
+      if (lean(a.need) * lean(b.need) < 0) out.push({ code: 'scene_need_clash' });
+    }
+  }
+  if (Number.isInteger(a.shake) && Number.isInteger(b.shake) && Math.abs(a.shake - b.shake) >= SHAKE_GAP) {
+    out.push({ code: 'scene_shake_gap', params: { seat: a.shake > b.shake ? 1 : 2 } });
+  }
+  if (!out.length) out.push({ code: 'differ' });
+  return out;
 }
 
 // Deck 4 wishlist: only items where both said yes or maybe. The "no" side is never exposed.
@@ -124,5 +157,6 @@ module.exports = {
   terrain,
   sceneLean,
   chasePattern,
+  sceneInsights,
   wishlistMatches
 };

@@ -49,7 +49,7 @@ const en = {
   },
   why: {
     answerOrPass: 'Pick an answer, or tap Pass.', rank: '{k} of {n} chosen. Tap at least {n}.', custom: 'Write your own answer in the box.',
-    slider: 'Move or tap the slider.', scene: 'Pick at least one feeling and one action.', wishlist: '{k} of {n} answered. Every item needs yes, maybe or no.',
+    slider: 'Move or tap the slider.', scene: 'Still open: {field}.', wishlist: '{k} of {n} answered. Every item needs yes, maybe or no.',
     label: 'Now pick how much this matters.', reply: 'Write an answer, record a voice note, or tap Pass.'
   },
   common: {
@@ -106,7 +106,7 @@ const en = {
     multiHint: 'Pick all that apply.', rankHint: 'Tap at least your top {n}, most important first. You can rank more.', rankPickHint: 'Tap your top {n} in order.',
     rankCount: '{k} of {n} chosen', rankCountMore: '{k} ranked',
     rankGuessHint: 'Pick what you think is their #1.', reset: 'Reset', moveSlider: 'Move the slider', typeHere: 'Write here…',
-    oneLine: 'One line', yourOption: 'Your own answer', optional: '(optional)',
+    oneLine: 'One line', yourOption: 'Your own answer', optional: '(optional)', pickedOf: '{k} of {n} picked',
     weatherPhrase: 'In one phrase', weatherPlaceholder: 'e.g. quiet and grey, then it passes'
   },
   scale: { low: 'Not at all', high: 'Completely' },
@@ -136,7 +136,7 @@ const en = {
     thread: 'Talk about it', writeHere: 'Write a message…'
   },
   climate: { storm: 'In a storm I need', asIs: 'as it is', asThought: 'as {name} thought', asThoughtByYou: 'as you thought' },
-  scene: { feel: 'feelings', do: 'action' },
+  scene: { story: 'story', do: 'action', need: 'what helps' },
   status: { discussed: 'Discussed', later: 'Come back later', rule: 'Make it our rule' },
   statusBadge: { discussed: 'discussed', later: 'later', rule: 'our rule' },
   terrain: { valley: 'Valley', hill: 'Hill', mountain: 'Mountain' },
@@ -150,7 +150,11 @@ const en = {
     rank_shared: '{n} of your top {k} overlap.',
     rank_top_same: 'Same first choice.',
     rank_top_differ: 'Different first choices.',
-    scene_same_do: 'You\'d do the same thing, but feel it differently.',
+    scene_same_do: 'You\'d do the same thing here, for different reasons.',
+    scene_same_story: 'You\'d tell yourselves the same story here.',
+    scene_same_need: 'You need the same thing here. That makes it easy to give.',
+    scene_need_clash: 'One of you needs closeness here, the other needs room. That\'s exactly what a signal is for.',
+    scene_shake_gap: '{name}: this one hits much harder.',
     guess_both: 'You both read each other right here.',
     guess_none: 'Neither guess landed. Worth asking about.',
     guess_one: '{name} guessed right, {other} missed.',
@@ -167,6 +171,7 @@ const en = {
     accuracyNote: 'Only for questions where you guessed. Not a score of the relationship.',
     youRead: 'You read {name}', theyRead: '{name} read you',
     climate: 'Climate', relief: 'Relief', storyboard: 'One reaches out, the other pulls back: {n} of {total} scenes.',
+    storyboardStory: 'Same story in your heads: {n} of {total} scenes.', storyboardNeed: '{name}: what helps most often',
     rules: 'Our rules', noRules: 'No rules yet. Use "Make it our rule" on a card.',
     later: 'Come back later', noLater: 'Nothing saved for later.',
     share: 'Share image', shareNote: 'Climate, relief and accuracy. Never a single answer word for word, and never the 18+ deck.',
@@ -192,6 +197,27 @@ const en = {
     title: 'Then and now', intro: 'Retake stage 1 of any deck and see what changed, and how much better you read each other.',
     now: '{deck}: answer again', guess: 'Now guess {name} again', waiting: 'Waiting for {name}…',
     compareTitle: '{deck}: then and now', then: 'then', nowCol: 'now', wishMatches: 'Shared wishes: {then} then, {now} now.'
+  },
+  mine: {
+    title: 'My answers',
+    cardText: 'All your own answers in one list, to keep, to reread in a few months, or to bring to a therapist, a coach or an AI assistant.',
+    open: 'Get my answers',
+    intro: 'Only your own answers, never your partner\'s. Copy the text or download a file: Markdown reads well anywhere, JSON is easiest for AI tools.',
+    optAi: 'Add a short note for an AI assistant or a therapist',
+    optGuesses: 'Include my guesses about {name}',
+    optAdult: 'Include the 18+ deck',
+    preview: 'Preview',
+    empty: 'Nothing answered yet.',
+    copy: 'Copy text',
+    privacy: 'The file is made on your device. Once you copy or download it, it\'s outside the app\'s encryption, so keep it somewhere private.',
+    docTitle: '{name}: my answers',
+    with: 'with {name}',
+    aiNote: 'These are my own answers from Two Maps, a guided conversation game I play with my partner {name}, based on Gottman\'s Love Maps and emotionally focused therapy. Please help me see patterns: what I feel and tell myself when connection feels shaky, what I actually need, and what might be worth talking through with {name}. Ask me questions rather than diagnosing me or giving me labels.',
+    passed: 'Passed',
+    myGuess: 'My guess about {name}:',
+    replies: 'Questions {name} asked me',
+    asked: 'Questions I chose for {name}',
+    askedAbout: 'What I wanted to know about my partner says something about me too.'
   },
   menu: { howTo: 'How to play', briefing: 'Room briefing', title: 'Room', myRooms: 'All my rooms', expires: 'This room is kept until {date} (extended with activity).' },
   danger: {
@@ -262,7 +288,7 @@ const ru = {
   },
   why: {
     answerOrPass: 'Выбери ответ или нажми «Пас».', rank: 'Выбрано {k} из {n}. Нужно хотя бы {n}.', custom: 'Напиши свой вариант в поле.',
-    slider: 'Сдвинь ползунок или нажми на него.', scene: 'Выбери хотя бы одно чувство и одно действие.', wishlist: 'Отвечено {k} из {n}. Для каждого пункта нужно «да», «может» или «нет».',
+    slider: 'Сдвинь ползунок или нажми на него.', scene: 'Ещё не отвечено: {field}.', wishlist: 'Отвечено {k} из {n}. Для каждого пункта нужно «да», «может» или «нет».',
     label: 'Теперь отметь, насколько это важно.', reply: 'Напиши ответ, запиши голосовое или нажми «Пас».'
   },
   common: {
@@ -319,7 +345,7 @@ const ru = {
     multiHint: 'Можно выбрать несколько.', rankHint: 'Выбери хотя бы топ-{n} по порядку, самое важное первым. Можно и больше.', rankPickHint: 'Выбери топ-{n} по порядку.',
     rankCount: 'Выбрано {k} из {n}', rankCountMore: 'Расставлено: {k}',
     rankGuessHint: 'Выбери, что у партнёра на первом месте.', reset: 'Сбросить', moveSlider: 'Сдвинь ползунок', typeHere: 'Напиши здесь…',
-    oneLine: 'Одна строка', yourOption: 'Свой вариант', optional: '(необязательно)',
+    oneLine: 'Одна строка', yourOption: 'Свой вариант', optional: '(необязательно)', pickedOf: 'Выбрано {k} из {n}',
     weatherPhrase: 'Одной фразой', weatherPlaceholder: 'например: тихо и серо, потом проходит'
   },
   scale: { low: 'Совсем нет', high: 'Полностью' },
@@ -349,7 +375,7 @@ const ru = {
     thread: 'Обсудить', writeHere: 'Напиши сообщение…'
   },
   climate: { storm: 'В грозу мне нужно', asIs: 'как есть', asThought: 'как думал(а): {name}', asThoughtByYou: 'как думал(а) ты' },
-  scene: { feel: 'чувства', do: 'действие' },
+  scene: { story: 'история', do: 'действие', need: 'что поможет' },
   status: { discussed: 'Обсудили', later: 'Вернуться позже', rule: 'Сделать нашим правилом' },
   statusBadge: { discussed: 'обсудили', later: 'позже', rule: 'наше правило' },
   terrain: { valley: 'Долина', hill: 'Холм', mountain: 'Гора' },
@@ -363,7 +389,11 @@ const ru = {
     rank_shared: 'Совпадает {n} из топ-{k}.',
     rank_top_same: 'Первое место совпадает.',
     rank_top_differ: 'Первое место разное.',
-    scene_same_do: 'Сделали бы одно и то же, но чувствуете по-разному.',
+    scene_same_do: 'Здесь вы сделали бы одно и то же, но по разным причинам.',
+    scene_same_story: 'Здесь вы рассказали бы себе одну и ту же историю.',
+    scene_same_need: 'Здесь вам нужно одно и то же. Значит, это легко дать друг другу.',
+    scene_need_clash: 'Здесь одному нужна близость, а другому пространство. Именно для этого и нужен сигнал.',
+    scene_shake_gap: '{name}: эта сцена задевает гораздо сильнее.',
     guess_both: 'Здесь вы оба угадали друг друга.',
     guess_none: 'Оба прогноза мимо. Есть о чём спросить.',
     guess_one: '{name} — попадание, {other} — мимо.',
@@ -380,6 +410,7 @@ const ru = {
     accuracyNote: 'Только по вопросам, где был прогноз. Это не оценка отношений.',
     youRead: 'Ты угадал(а): {name}', theyRead: '{name} угадал(а) тебя',
     climate: 'Климат', relief: 'Рельеф', storyboard: 'Один догоняет, другой отходит: {n} из {total} сцен.',
+    storyboardStory: 'Одна и та же история в голове: {n} из {total} сцен.', storyboardNeed: '{name}: что помогает чаще всего',
     rules: 'Наши правила', noRules: 'Правил пока нет. На карточке есть кнопка «Сделать нашим правилом».',
     later: 'Вернуться позже', noLater: 'Ничего не отложено.',
     share: 'Картинка', shareNote: 'Климат, рельеф и точность. Ни одного ответа дословно, колода 18+ — никогда.',
@@ -405,6 +436,27 @@ const ru = {
     title: 'Тогда и сейчас', intro: 'Пройдите заново этап 1 любой колоды и посмотрите, что изменилось и насколько лучше вы стали угадывать друг друга.',
     now: '{deck}: ответь заново', guess: 'Теперь снова угадай: {name}', waiting: 'Ждём: {name}…',
     compareTitle: '{deck}: тогда и сейчас', then: 'тогда', nowCol: 'сейчас', wishMatches: 'Общих желаний: тогда {then}, сейчас {now}.'
+  },
+  mine: {
+    title: 'Мои ответы',
+    cardText: 'Все твои ответы одним списком: сохранить, перечитать через пару месяцев или принести психологу, коучу или ИИ-ассистенту.',
+    open: 'Получить мои ответы',
+    intro: 'Только твои ответы, ответов партнёра здесь нет. Скопируй текст или скачай файл: Markdown удобно читать где угодно, JSON удобнее для ИИ-инструментов.',
+    optAi: 'Добавить короткую записку для ИИ-ассистента или психолога',
+    optGuesses: 'Добавить мои догадки о {name}',
+    optAdult: 'Добавить колоду 18+',
+    preview: 'Предпросмотр',
+    empty: 'Пока ничего не отвечено.',
+    copy: 'Скопировать текст',
+    privacy: 'Файл создаётся на твоём устройстве. После копирования или скачивания он уже вне шифрования приложения, так что храни его в надёжном месте.',
+    docTitle: '{name}: мои ответы',
+    with: 'с {name}',
+    aiNote: 'Это мои ответы из Two Maps, игры-разговора, в которую я играю с партнёром ({name}). Она основана на «картах любви» Готтмана и эмоционально-фокусированной терапии. Помоги мне увидеть закономерности: что я чувствую и что себе рассказываю, когда связь кажется шаткой, что мне на самом деле нужно и что стоит обсудить с {name}. Задавай мне вопросы вместо диагнозов и ярлыков.',
+    passed: 'Пропущено',
+    myGuess: 'Моя догадка о {name}:',
+    replies: 'Вопросы, которые мне задал(а) {name}',
+    asked: 'Вопросы, которые я выбрал(а) для {name}',
+    askedAbout: 'То, что я хотел(а) узнать о партнёре, тоже кое-что говорит обо мне.'
   },
   menu: { howTo: 'Как играть', briefing: 'Инструктаж', title: 'Комната', myRooms: 'Все мои комнаты', expires: 'Комната хранится до {date} (продлевается при активности).' },
   danger: {
@@ -475,7 +527,7 @@ const he = {
   },
   why: {
     answerOrPass: 'בחרו תשובה או לחצו דלג.', rank: 'נבחרו {k} מתוך {n}. צריך לפחות {n}.', custom: 'כתבו את התשובה שלכם בתיבה.',
-    slider: 'הזיזו את המחוון או לחצו עליו.', scene: 'בחרו לפחות רגש אחד ופעולה אחת.', wishlist: 'נענו {k} מתוך {n}. לכל פריט צריך כן, אולי או לא.',
+    slider: 'הזיזו את המחוון או לחצו עליו.', scene: 'עוד פתוח: {field}.', wishlist: 'נענו {k} מתוך {n}. לכל פריט צריך כן, אולי או לא.',
     label: 'עכשיו סמנו כמה זה חשוב.', reply: 'כתבו תשובה, הקליטו הודעה קולית או לחצו דלג.'
   },
   common: {
@@ -532,7 +584,7 @@ const he = {
     multiHint: 'אפשר לבחור כמה.', rankHint: 'בחרו לפחות את ה־{n} המובילים, הכי חשוב קודם. אפשר גם יותר.', rankPickHint: 'בחרו את ה־{n} המובילים לפי הסדר.',
     rankCount: 'נבחרו {k} מתוך {n}', rankCountMore: 'דורגו {k}',
     rankGuessHint: 'בחרו מה לדעתכם במקום הראשון אצלם.', reset: 'איפוס', moveSlider: 'הזיזו את המחוון', typeHere: 'כתבו כאן…',
-    oneLine: 'שורה אחת', yourOption: 'תשובה משלך', optional: '(לא חובה)',
+    oneLine: 'שורה אחת', yourOption: 'תשובה משלך', optional: '(לא חובה)', pickedOf: 'נבחרו {k} מתוך {n}',
     weatherPhrase: 'במשפט אחד', weatherPlaceholder: 'למשל: שקט ואפור, ואז עובר'
   },
   scale: { low: 'בכלל לא', high: 'לגמרי' },
@@ -562,7 +614,7 @@ const he = {
     thread: 'לדבר על זה', writeHere: 'כתבו הודעה…'
   },
   climate: { storm: 'בסערה אני צריך/ה', asIs: 'כמו שזה', asThought: 'כמו ש{name} חשב/ה', asThoughtByYou: 'כמו שחשבת' },
-  scene: { feel: 'רגשות', do: 'פעולה' },
+  scene: { story: 'סיפור', do: 'פעולה', need: 'מה עוזר' },
   status: { discussed: 'דיברנו', later: 'לחזור לזה', rule: 'להפוך לכלל שלנו' },
   statusBadge: { discussed: 'דיברנו', later: 'אחר כך', rule: 'הכלל שלנו' },
   terrain: { valley: 'עמק', hill: 'גבעה', mountain: 'הר' },
@@ -576,7 +628,11 @@ const he = {
     rank_shared: '{n} מתוך {k} המובילים משותפים.',
     rank_top_same: 'אותו מקום ראשון.',
     rank_top_differ: 'מקום ראשון שונה.',
-    scene_same_do: 'הייתם עושים אותו דבר, אבל מרגישים אחרת.',
+    scene_same_do: 'כאן הייתם עושים אותו דבר, מסיבות שונות.',
+    scene_same_story: 'כאן הייתם מספרים לעצמכם אותו סיפור.',
+    scene_same_need: 'כאן אתם צריכים את אותו הדבר. קל לתת אותו אחד לשני.',
+    scene_need_clash: 'כאן אחד צריך קרבה והשני צריך מרחב. בדיוק בשביל זה יש סימן.',
+    scene_shake_gap: '{name}: הסצנה הזו פוגעת הרבה יותר חזק.',
     guess_both: 'כאן שניכם קראתם אחד את השני נכון.',
     guess_none: 'שני הניחושים פספסו. שווה לשאול.',
     guess_one: '{name}: פגיעה · {other}: החטאה.',
@@ -593,6 +649,7 @@ const he = {
     accuracyNote: 'רק בשאלות שבהן ניחשתם. זה לא ציון לקשר.',
     youRead: 'ניחשת את {name}', theyRead: '{name} ניחש/ה אותך',
     climate: 'אקלים', relief: 'תבליט', storyboard: 'אחד מתקרב, השני מתרחק: {n} מתוך {total} סצנות.',
+    storyboardStory: 'אותו סיפור בראש: {n} מתוך {total} סצנות.', storyboardNeed: '{name}: מה עוזר הכי הרבה',
     rules: 'הכללים שלנו', noRules: 'עוד אין כללים. בכל קלף יש כפתור "להפוך לכלל שלנו".',
     later: 'לחזור לזה', noLater: 'לא נשמר כלום לאחר כך.',
     share: 'תמונה לשיתוף', shareNote: 'אקלים, תבליט ודיוק. אף תשובה מילה במילה, ואף פעם לא חפיסת ה־18+.',
@@ -618,6 +675,27 @@ const he = {
     title: 'אז ועכשיו', intro: 'עברו שוב על שלב 1 של חפיסה כלשהי וראו מה השתנה, וכמה יותר טוב אתם קוראים אחד את השני.',
     now: '{deck}: לענות שוב', guess: 'עכשיו לנחש שוב את {name}', waiting: 'מחכים ל{name}…',
     compareTitle: '{deck}: אז ועכשיו', then: 'אז', nowCol: 'עכשיו', wishMatches: 'משאלות משותפות: אז {then}, עכשיו {now}.'
+  },
+  mine: {
+    title: 'התשובות שלי',
+    cardText: 'כל התשובות שלך ברשימה אחת: לשמור, לקרוא שוב בעוד כמה חודשים, או להביא למטפל/ת, למאמן/ת או לעוזר AI.',
+    open: 'לקבל את התשובות שלי',
+    intro: 'רק התשובות שלך, אף פעם לא של בן/בת הזוג. העתיקו את הטקסט או הורידו קובץ: Markdown נוח לקריאה בכל מקום, JSON הכי נוח לכלי AI.',
+    optAi: 'להוסיף הערה קצרה לעוזר AI או למטפל/ת',
+    optGuesses: 'לכלול את הניחושים שלי לגבי {name}',
+    optAdult: 'לכלול את החפיסה 18+',
+    preview: 'תצוגה מקדימה',
+    empty: 'עוד לא נענו שאלות.',
+    copy: 'להעתיק טקסט',
+    privacy: 'הקובץ נוצר במכשיר שלך. אחרי העתקה או הורדה הוא כבר מחוץ להצפנה של האפליקציה, אז שמרו אותו במקום פרטי.',
+    docTitle: '{name}: התשובות שלי',
+    with: 'עם {name}',
+    aiNote: 'אלה התשובות שלי מ־Two Maps, משחק שיחה מודרך שאני משחק/ת עם בן/בת הזוג שלי, {name}. הוא מבוסס על "מפות האהבה" של גוטמן ועל טיפול ממוקד רגש. עזור/עזרי לי לראות דפוסים: מה אני מרגיש/ה ומספר/ת לעצמי כשהקשר מרגיש רעוע, מה אני באמת צריך/ה, ועל מה כדאי לדבר עם {name}. שאל/י אותי שאלות במקום לאבחן או להדביק תוויות.',
+    passed: 'דילגתי',
+    myGuess: 'הניחוש שלי לגבי {name}:',
+    replies: 'שאלות ש{name} שאל/ה אותי',
+    asked: 'שאלות שבחרתי בשביל {name}',
+    askedAbout: 'מה שרציתי לדעת על בן/בת הזוג אומר משהו גם עליי.'
   },
   menu: { howTo: 'איך משחקים', briefing: 'הסבר על החדר', title: 'חדר', myRooms: 'כל החדרים שלי', expires: 'החדר נשמר עד {date} (מתארך עם פעילות).' },
   danger: {
