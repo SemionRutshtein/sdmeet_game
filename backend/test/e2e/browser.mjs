@@ -76,7 +76,10 @@ async function fillStep(page, variant) {
   await card.waitFor();
   const pick = variant ? 1 : 0;
   if (await card.locator('.weather-grid').count()) await card.locator('.weather-grid .opt').nth(pick).click();
-  if (await card.locator('.scale').count()) await card.locator('.scale .opt').nth(variant ? 6 : 2).click();
+  if (await card.locator('.scale').count()) {
+    const steps = card.locator('.scale .opt');
+    await steps.nth(Math.min(variant ? 6 : 2, (await steps.count()) - 1)).click();
+  }
   const range = card.locator('input[type=range]');
   if (await range.count()) await range.evaluate((el, v) => { el.value = v; el.dispatchEvent(new Event('input', { bubbles: true })); }, variant ? 90 : 20);
   if (await card.locator('.wish-row').count()) {

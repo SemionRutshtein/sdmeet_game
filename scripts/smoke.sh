@@ -77,7 +77,9 @@ elif .type == "scale" then {value: (if $v == 1 then .max else .min end)}
 elif .type == "slider" then {value: (10 + 80 * $v)}
 elif .type == "text" then {text: "answer from player \($v)"}
 elif .type == "weather" then {icon: .options[$v].id, phrase: "grey, then it passes"}
-elif .type == "scene" then {feel: [$d.sceneFields.feel.options[$v].id], do: $d.sceneFields.do.options[$v].id, want: "a short call"}
+elif .type == "scene" then ($d.sceneFields | to_entries | map(select(.value.type != "text")
+    | {key, value: (if .value.type == "scale" then .value.min + $v elif .value.type == "multi" then [.value.options[$v].id] else .value.options[$v].id end)})
+    | from_entries) + {want: "a short call"}
 elif .type == "wishlist" then {items: ($wish | map({key: .id, value: (if $v == 1 then "yes" else "maybe" end)}) | from_entries)}
 else error("unknown type") end'
 JQ_GUESS='
@@ -86,7 +88,7 @@ if .type == "choice" or .type == "rank" then {option: .options[0].id}
 elif .type == "multi" then {options: [.options[0].id]}
 elif .type == "scale" then {value: 4}
 elif .type == "weather" then {icon: .options[0].id}
-elif .type == "scene" then {feel: [$d.sceneFields.feel.options[0].id], do: $d.sceneFields.do.options[0].id}
+elif .type == "scene" then ($d.sceneFields | to_entries | map(select(.value.guess) | {key, value: .value.options[0].id}) | from_entries)
 else error("not predictable") end'
 
 answer_stage1() { # token variant

@@ -10,6 +10,7 @@ import { capsuleSection } from './capsule.js';
 import { topbar } from './topbar.js';
 import { briefingView, agreementsView } from './briefing.js';
 import { howToPlaySheet } from './explainer.js';
+import { myAnswersSheet } from './myAnswers.js';
 import { seen, markSeen } from '../prefs.js';
 import { transition } from '../motion.js';
 
@@ -173,6 +174,9 @@ export async function roomView(root, roomId, navigate) {
         h('button', { class: 'btn ghost block', onclick: () => { s.close(); howToPlaySheet(); } }, '▶ ', t('menu.howTo')),
         state.room.status === 'playing'
           ? h('button', { class: 'btn ghost block', onclick: () => { s.close(); forceBrief = true; decide(); window.scrollTo?.(0, 0); } }, '🧭 ', t('menu.briefing'))
+          : null,
+        state.room.status !== 'archived'
+          ? h('button', { class: 'btn ghost block', onclick: () => { s.close(); myAnswersSheet(state); } }, '📝 ', t('mine.title'))
           : null,
         h('a', { class: 'btn ghost block', href: '/' }, t('menu.myRooms')),
         h('p', { class: 'small muted' }, t('menu.expires', { date: new Date(state.room.expiresAt).toLocaleDateString() })),

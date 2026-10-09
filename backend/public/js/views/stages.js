@@ -9,6 +9,11 @@ import { voiceRecorder } from '../voice.js';
 
 const LABELS = ['negotiable', 'important', 'fixed'];
 
+// Scenes carry a line of detail that sets the moment before the answers.
+function sceneDetail(q) {
+  return q.detail ? h('p', { class: 'scene-detail' }, loc(q.detail)) : null;
+}
+
 function deckHeader(d) {
   return h('span', { class: 'eyebrow' }, d.icon, ' ', loc(d.title));
 }
@@ -46,7 +51,7 @@ function deckIntro(d, n, total) {
       d.why ? h('div', { class: 'why-box' }, h('div', { class: 'eyebrow' }, '🔬 ', t('intro.why')), h('p', {}, loc(d.why))) : null,
       h('div', { class: 'deck-intro-meta' },
         h('span', { class: 'chip' }, t('intro.meta', { q: d.stage1.length, m: minutesFor([d]) }))),
-      h('p', { class: 'small muted breath' }, t('intro.tip')))
+      h('p', { class: 'small muted breath' }, d.intro ? loc(d.intro) : t('intro.tip')))
   };
 }
 
@@ -74,7 +79,8 @@ export function selfSteps({ deckIds, api, kind = 'self' }) {
         header: deckHeader(d),
         prompt: h('div', {},
           q.lock ? h('span', { class: 'pill gold', style: { marginInlineEnd: '0.5rem' } }, '🔒 ', t('lock.short')) : null,
-          loc(q.prompt)),
+          loc(q.prompt),
+          sceneDetail(q)),
         render(val, onChange) {
           const cur = { v: val?.v, label: val?.label };
           return h('div', {},
@@ -238,7 +244,7 @@ export function stage3View({ state, api, drafts, refresh, partnerName }) {
       steps.push({
         key: `guess:${qkey}`,
         header: h('span', { class: 'eyebrow' }, '🔮 ', t('stage3.guessHeader', { name: partnerName }), ' · ', loc(d.title)),
-        prompt: h('div', {}, h('div', { class: 'small muted', style: { fontFamily: 'var(--sans)' } }, t('stage3.guessIntro', { name: partnerName })), loc(q.prompt)),
+        prompt: h('div', {}, h('div', { class: 'small muted', style: { fontFamily: 'var(--sans)' } }, t('stage3.guessIntro', { name: partnerName })), loc(q.prompt), sceneDetail(q)),
         render: (val, onChange) => questionInput({ q, deck: d, value: val, mode: 'guess', onChange }),
         complete: val => isComplete(q, d, val, 'guess'),
         why: val => whyIncomplete(q, d, val, 'guess'),

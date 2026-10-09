@@ -172,6 +172,7 @@ export function cardSheet(ctx, key, onClosed) {
     if (!talk) return '';
     if (talk.ref === 'asked') return t('reveal.talkAsked');
     if (talk.ref.startsWith('group:')) return loc(d.reveal.groups.find(g => g.id === talk.ref.slice(6)).talk);
+    if (talk.ref === 'qtalk') return loc(d.stage1.find(q => q.id === talk.qid).talk);
     return loc(d.reveal[talk.ref]);
   }
 
@@ -301,7 +302,9 @@ export function cardSheet(ctx, key, onClosed) {
         set(detail.status === status ? null : status);
       }
     }, STATUS_ICON[status], ' ', t(`status.${status}`));
-    const ruleInput = h('input', { type: 'text', 'data-focus': 'rule', maxlength: 300, placeholder: t('reveal.rulePlaceholder'), value: ruleDraft || detail.rule || '' });
+    const d = detail.deck ? deckOf(detail.deck) : null;
+    const placeholder = d?.reveal.rulePlaceholder ? loc(d.reveal.rulePlaceholder) : t('reveal.rulePlaceholder');
+    const ruleInput = h('input', { type: 'text', 'data-focus': 'rule', maxlength: 300, placeholder, value: ruleDraft || detail.rule || '' });
     ruleInput.addEventListener('input', () => { ruleDraft = ruleInput.value; });
     return h('div', {},
       h('div', { class: 'actions' }, btn('discussed'), btn('later'), btn('rule')),

@@ -43,6 +43,31 @@ function checkOptions(options, where, out) {
   }
 }
 
+// Scene fields are answered for every scene of the deck. Choice/multi options
+// carry hidden seek/withdraw weights (w), except on the free-text field.
+const SCENE_FIELD_TYPES = ['scale', 'choice', 'multi', 'text'];
+function checkSceneFields(fields, dw, out) {
+  const entries = Object.entries(fields);
+  if (!entries.length) out.push(`${dw}: empty sceneFields`);
+  for (const [key, f] of entries) {
+    const fw = `${dw} sceneFields.${key}`;
+    if (!SCENE_FIELD_TYPES.includes(f.type)) {
+      out.push(`${fw}: unknown type "${f.type}"`);
+      continue;
+    }
+    if (f.type === 'scale' && !(Number.isInteger(f.min) && Number.isInteger(f.max) && f.min < f.max)) out.push(`${fw}: bad scale range`);
+    if (f.type === 'text' && f.guess) out.push(`${fw}: text can't be guessed`);
+    if (f.type === 'choice' || f.type === 'multi') {
+      checkOptions(f.options, fw, out);
+      for (const o of f.options || []) {
+        if (!Array.isArray(o.w) || o.w.length !== 2) out.push(`${fw} option ${o.id}: needs w: [seek, withdraw]`);
+        if (f.layers && !f.layers[o.layer]) out.push(`${fw} option ${o.id}: unknown layer "${o.layer}"`);
+      }
+    }
+  }
+  if (!entries.some(([, f]) => f.guess)) out.push(`${dw}: sceneFields has nothing to guess`);
+}
+
 function validateContent({ decks, wishlist, capsule }) {
   const out = [];
   const deckIds = new Set();
@@ -70,13 +95,7 @@ function validateContent({ decks, wishlist, capsule }) {
         out.push(`${qw}: type ${q.type} can't be predictable`);
       }
     }
-    if (deck.sceneFields) {
-      checkOptions(deck.sceneFields.feel?.options, `${dw} sceneFields.feel`, out);
-      checkOptions(deck.sceneFields.do?.options, `${dw} sceneFields.do`, out);
-      for (const o of [...(deck.sceneFields.feel?.options || []), ...(deck.sceneFields.do?.options || [])]) {
-        if (!Array.isArray(o.w) || o.w.length !== 2) out.push(`${dw} scene option ${o.id}: needs w: [seek, withdraw]`);
-      }
-    }
+    if (deck.sceneFields) checkSceneFields(deck.sceneFields, dw, out);
     for (const g of deck.reveal?.groups || []) {
       for (const qid of g.questions) {
         if (!qids.has(qid)) out.push(`${dw} group ${g.id}: unknown question ${qid}`);

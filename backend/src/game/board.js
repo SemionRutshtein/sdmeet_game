@@ -96,11 +96,11 @@ function seatAnswer(rec) {
   return out;
 }
 
-function guessView(q, guessRec, actualRec) {
+function guessView(deck, q, guessRec, actualRec) {
   if (!guessRec) return null;
   if (guessRec.pass) return { pass: true };
   const out = { value: guessRec.v };
-  if (answered(actualRec)) out.checks = score.checkGuess(q, actualRec.v, guessRec.v);
+  if (answered(actualRec)) out.checks = score.checkGuess(q, actualRec.v, guessRec.v, deck);
   return out;
 }
 
@@ -125,7 +125,6 @@ function compareLine(q, cmp) {
   if (q.type === 'scale') return { code: 'apart_points', params: { n: cmp.distance } };
   if (q.type === 'slider') return { code: 'apart_percent', params: { n: cmp.distance } };
   if (q.type === 'multi') return { code: 'multi_shared', params: { n: cmp.shared.length } };
-  if (q.type === 'scene' && cmp.sameDo) return { code: 'scene_same_do' };
   return { code: 'differ' };
 }
 
@@ -143,8 +142,8 @@ function questionView(ctx, deck, q) {
   const view = { qid: q.id, type: q.type, answers: { 1: seatAnswer(a), 2: seatAnswer(b) } };
   if (q.predictable) {
     view.guesses = {
-      1: guessView(q, ctx.guess[1].get(key), b), // seat 1 guessed seat 2
-      2: guessView(q, ctx.guess[2].get(key), a)
+      1: guessView(deck, q, ctx.guess[1].get(key), b), // seat 1 guessed seat 2
+      2: guessView(deck, q, ctx.guess[2].get(key), a)
     };
   }
   return view;
@@ -175,19 +174,25 @@ function selfCardView(ctx, card) {
   const view = questionView(ctx, deck, q);
   const { cmp } = compareFor(ctx, deck, q);
   const lines = passLines(a, b);
-  const cl = compareLine(q, cmp);
-  if (cl) lines.push(cl);
+  const bothAnswered = answered(a) && answered(b);
+  if (q.type === 'scene') {
+    if (bothAnswered) lines.push(...score.sceneInsights(deck, a.v, b.v));
+  } else {
+    const cl = compareLine(q, cmp);
+    if (cl) lines.push(cl);
+  }
   if (view.guesses) {
     const gl = guessLine(view.guesses);
     if (gl) lines.push(gl);
   }
-  let talk = { deck: deck.id, ref: 'talk' };
+  // A question can carry its own talk prompt; the deck's is the fallback.
+  let talk = q.talk ? { deck: deck.id, qid: q.id, ref: 'qtalk' } : { deck: deck.id, ref: 'talk' };
   if (card.terrain) {
     view.terrain = card.terrain;
     lines.unshift({ code: `terrain_${card.terrain}` });
     if (card.terrain === 'mountain' && deck.reveal.talkMountain) talk = { deck: deck.id, ref: 'talkMountain' };
   }
-  if (q.type === 'scene' && answered(a) && answered(b) && score.chasePattern(deck, a.v, b.v)) {
+  if (q.type === 'scene' && bothAnswered && score.chasePattern(deck, a.v, b.v)) {
     view.pattern = 'chase';
     lines.push({ code: 'chase' });
   }
@@ -253,7 +258,7 @@ function summary(ctx, cards) {
         const g = ctx.guess[seat].get(key);
         const actual = ctx.self[other(seat)].get(key);
         if (!answered(g) || !answered(actual)) continue;
-        const checks = score.checkGuess(q, actual.v, g.v);
+        const checks = score.checkGuess(q, actual.v, g.v, deck);
         bySeat[seat].total += checks.length;
         bySeat[seat].hits += checks.filter(c => c.hit).length;
       }
@@ -278,14 +283,24 @@ function summary(ctx, cards) {
     const deck = ctx.content.deckById.get('six-hours');
     let chase = 0;
     let total = 0;
+    let sameStory = 0;
+    const needs = { 1: new Map(), 2: new Map() };
     for (const q of deck.stage1) {
-      const a = ctx.self[1].get(qkey(deck.id, q.id));
-      const b = ctx.self[2].get(qkey(deck.id, q.id));
+      const key = qkey(deck.id, q.id);
+      const a = ctx.self[1].get(key);
+      const b = ctx.self[2].get(key);
+      for (const [seat, rec] of [[1, a], [2, b]]) {
+        const id = answered(rec) ? rec.v.need : null;
+        if (id) needs[seat].set(id, (needs[seat].get(id) || 0) + 1);
+      }
       if (!answered(a) || !answered(b)) continue;
       total++;
       if (score.chasePattern(deck, a.v, b.v)) chase++;
+      if (a.v.story != null && a.v.story === b.v.story) sameStory++;
     }
-    out.storyboard = { chase, total };
+    // What helps each person most often (ties: the first one picked).
+    const top = m => [...m.entries()].reduce((best, e) => (!best || e[1] > best[1] ? e : best), null)?.[0] || null;
+    out.storyboard = { chase, total, sameStory, needs: { 1: top(needs[1]), 2: top(needs[2]) } };
   }
   return out;
 }

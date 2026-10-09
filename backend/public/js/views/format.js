@@ -2,7 +2,7 @@
 // the export and the capsule comparison.
 import { h } from '../dom.js';
 import { t, loc } from '../i18n.js';
-import { optionLabel, deck as deckOf, poolText } from '../content.js';
+import { optionLabel, deck as deckOf, poolText, C } from '../content.js';
 import { voicePlayer } from '../voice.js';
 
 export function formatValue(q, deck, value, { api } = {}) {
@@ -35,15 +35,88 @@ export function formatValue(q, deck, value, { api } = {}) {
       return h('div', {}, h('span', { style: { fontSize: '1.6rem' } }, o?.icon || ''), ' ', o ? loc(o.label) : '',
         value.phrase ? h('div', { class: 'small', style: { marginTop: '0.3rem' } }, `“${value.phrase}”`) : null);
     }
-    case 'scene': {
-      const f = deck.sceneFields;
-      return h('div', { class: 'small' },
-        h('div', {}, h('span', { class: 'muted' }, loc(f.feel.prompt), ': '), value.feel.map(id => optionLabel(f.feel.options, id)).join(', ')),
-        h('div', {}, h('span', { class: 'muted' }, loc(f.do.prompt), ': '), optionLabel(f.do.options, value.do)),
-        value.want ? h('div', {}, h('span', { class: 'muted' }, loc(f.want.prompt), ': '), value.want) : null);
-    }
+    case 'scene':
+      return sceneStrip(deck, value);
     default:
       return h('span', {}, '…');
+  }
+}
+
+// A scene answer as a small storyboard: how hard it hits, the story,
+// the feelings (surface / underneath), the action, what would help.
+function sceneStrip(deck, value) {
+  const rows = [];
+  for (const [key, f] of Object.entries(deck.sceneFields)) {
+    const v = value[key];
+    if (v == null || (Array.isArray(v) && !v.length)) continue;
+    const row = (body, cls = '') => rows.push(h('div', { class: `strip-row ${cls}` }, h('span', { class: 'muted strip-label' }, loc(f.prompt)), body));
+    if (f.type === 'scale') {
+      row(h('span', { class: 'shake', 'aria-label': `${v} / ${f.max}` }, '●'.repeat(v - f.min + 1) + '○'.repeat(f.max - v)), 'strip-shake');
+    } else if (f.type === 'choice') {
+      row(h('span', {}, key === 'story' ? `💭 “${optionLabel(f.options, v)}”` : optionLabel(f.options, v)), `strip-${key}`);
+    } else if (f.type === 'multi' && f.layers) {
+      row(h('span', {}, Object.entries(f.layers).map(([layer, title]) => {
+        const ids = v.filter(id => f.options.find(o => o.id === id)?.layer === layer);
+        return ids.length ? h('span', { class: `feel-layer ${layer}` }, h('span', { class: 'tiny muted' }, loc(title), ': '), ids.map(id => optionLabel(f.options, id)).join(', ')) : null;
+      })));
+    } else if (f.type === 'multi') {
+      row(h('span', {}, v.map(id => optionLabel(f.options, id)).join(', ')));
+    } else {
+      row(h('span', {}, `“${v}”`), 'strip-want');
+    }
+  }
+  return h('div', { class: 'small strip' }, rows);
+}
+
+// Plain-text version of any answer, for the "my answers" export.
+export function valueText(q, deck, value) {
+  if (!value) return '';
+  switch (q.type) {
+    case 'choice': {
+      const o = q.options.find(x => x.id === value.option);
+      const main = o?.custom && value.custom ? value.custom : optionLabel(q.options, value.option);
+      return value.followup ? `${main}\n${loc(q.followup.prompt)}: ${value.followup}` : main;
+    }
+    case 'multi':
+      return value.options.map(id => optionLabel(q.options, id)).join(', ');
+    case 'rank':
+      if (value.option) return optionLabel(q.options, value.option);
+      return value.order.map((id, i) => `${i + 1}. ${optionLabel(q.options, id)}`).join('\n');
+    case 'scale':
+      return `${value.value} / ${q.max}`;
+    case 'slider':
+      return q.unit ? `${value.value}${q.unit} · ${loc(q.right)}` : `${value.value}/100 (${loc(q.left)} ↔ ${loc(q.right)})`;
+    case 'text':
+      return [value.text, value.voiceId ? t('export.voiceOnly') : null].filter(Boolean).join(' ');
+    case 'weather': {
+      const o = q.options.find(x => x.id === value.icon);
+      return [o ? `${o.icon} ${loc(o.label)}` : '', value.phrase ? `“${value.phrase}”` : ''].filter(Boolean).join(' · ');
+    }
+    case 'scene': {
+      const lines = [];
+      for (const [key, f] of Object.entries(deck.sceneFields)) {
+        const v = value[key];
+        if (v == null || (Array.isArray(v) && !v.length)) continue;
+        let text;
+        if (f.type === 'scale') text = `${v} / ${f.max} (${loc(f.low)} → ${loc(f.high)})`;
+        else if (f.type === 'choice') text = optionLabel(f.options, v);
+        else if (f.type === 'multi' && f.layers) {
+          text = Object.entries(f.layers).map(([layer, title]) => {
+            const ids = v.filter(id => f.options.find(o => o.id === id)?.layer === layer);
+            return ids.length ? `${loc(title)}: ${ids.map(id => optionLabel(f.options, id)).join(', ')}` : null;
+          }).filter(Boolean).join('; ');
+        } else if (f.type === 'multi') text = v.map(id => optionLabel(f.options, id)).join(', ');
+        else text = v;
+        lines.push(`${loc(f.prompt)}: ${text}`);
+      }
+      return lines.join('\n');
+    }
+    case 'wishlist': {
+      const by = level => C().wishlist.filter(w => value.items?.[w.id] === level).map(w => loc(w.label));
+      return ['yes', 'maybe', 'no'].map(level => `${t(`wish.${level}`)}: ${by(level).join(', ') || '—'}`).join('\n');
+    }
+    default:
+      return '';
   }
 }
 

@@ -12,8 +12,13 @@ test('guess checks per type', () => {
   assert.equal(score.checkGuess(q('no-gloss', 'ok-seen'), { value: 4 }, { value: 5 })[0].hit, true);
   assert.equal(score.checkGuess(q('no-gloss', 'ok-seen'), { value: 4 }, { value: 6 })[0].hit, false);
   assert.equal(score.checkGuess(q('no-gloss', 'weather'), { icon: 'fog', phrase: 'x' }, { icon: 'fog' })[0].hit, true);
-  const scene = score.checkGuess(q('six-hours', 'no-reply'), { feel: ['anxiety', 'fear'], do: 'call' }, { feel: ['anxiety'], do: 'wait' });
-  assert.deepEqual(scene, [{ part: 'feel', hit: true }, { part: 'do', hit: false }]);
+  const six = deck('six-hours');
+  const actual = { shake: 4, story: 'not-priority', feel: ['anxiety', 'fear'], do: 'call', need: 'reassure' };
+  const scene = score.checkGuess(q('six-hours', 'no-reply'), actual, { story: 'not-priority', do: 'wait', need: 'reassure' }, six);
+  assert.deepEqual(scene, [{ part: 'story', hit: true }, { part: 'do', hit: false }, { part: 'need', hit: true }]);
+  // an answer saved before story/need existed only scores what it has
+  const old = score.checkGuess(q('six-hours', 'no-reply'), { feel: ['anxiety'], do: 'call' }, { story: 'busy', do: 'call', need: 'time' }, six);
+  assert.deepEqual(old, [{ part: 'do', hit: true }]);
 });
 
 test('terrain: valley / hill / mountain', () => {
@@ -31,9 +36,23 @@ test('terrain: valley / hill / mountain', () => {
 
 test('seek/withdraw chase pattern', () => {
   const d = deck('six-hours');
-  assert.equal(score.chasePattern(d, { feel: ['anxiety'], do: 'call' }, { feel: ['relief'], do: 'shut-down' }), true);
-  assert.equal(score.chasePattern(d, { feel: ['anxiety'], do: 'call' }, { feel: ['anxiety'], do: 'write-more' }), false);
-  assert.equal(score.chasePattern(d, { feel: ['sadness'], do: 'wait' }, { feel: ['hurt'], do: 'own-thing' }), false);
+  const seeker = { story: 'not-priority', feel: ['anxiety'], do: 'call', need: 'reassure' };
+  const withdrawer = { story: 'their-right', feel: ['relief'], do: 'shut-down', need: 'time' };
+  assert.equal(score.chasePattern(d, seeker, withdrawer), true);
+  assert.equal(score.chasePattern(d, seeker, { story: 'drifting', feel: ['fear'], do: 'write-more', need: 'voice' }), false);
+  assert.equal(score.chasePattern(d, { story: 'busy', feel: ['sadness'], do: 'wait', need: 'explain' }, { feel: ['hurt'], do: 'own-thing' }), false);
+});
+
+test('scene insights: shared story, needs that pull apart, who it hits harder', () => {
+  const d = deck('six-hours');
+  const codes = (a, b) => score.sceneInsights(d, a, b).map(x => x.code);
+  assert.deepEqual(codes({ story: 'busy', do: 'wait', need: 'time', shake: 1 }, { story: 'busy', do: 'call', need: 'time', shake: 2 }),
+    ['scene_same_story', 'scene_same_need']);
+  assert.deepEqual(codes({ story: 'busy', do: 'wait', need: 'voice', shake: 5 }, { story: 'unfair', do: 'wait', need: 'time', shake: 2 }),
+    ['scene_same_do', 'scene_need_clash', 'scene_shake_gap']);
+  assert.deepEqual(score.sceneInsights(d, { story: 'busy', do: 'wait', need: 'voice', shake: 2 }, { story: 'unfair', do: 'ask', need: 'time', shake: 5 })
+    .find(x => x.code === 'scene_shake_gap').params, { seat: 2 });
+  assert.deepEqual(codes({ story: 'busy', do: 'wait', need: 'voice' }, { story: 'unfair', do: 'ask', need: 'plan' }), ['differ']);
 });
 
 test('wishlist matches never include a "no"', () => {
